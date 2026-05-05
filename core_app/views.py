@@ -32,14 +32,25 @@ def home(request):
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
+        login_value = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=login_value, password=password)
         if user:
             login(request, user)
             messages.success(request, f'Welcome back, {user.first_name or user.username}.')
+            role = getattr(user.profile, 'role', '') if hasattr(user, 'profile') else ''
+            if role == 'BUYER':
+                return redirect('buyer_dashboard')
+            if role == 'SELLER':
+                return redirect('seller_dashboard')
+            if role == 'DRIVER':
+                return redirect('driver_dashboard')
+            if role == 'QA':
+                return redirect('qa_dashboard')
+            if role == 'ADMIN_STAFF' or user.is_staff or user.is_superuser:
+                return redirect('admin_dashboard')
             return redirect('home')
-        messages.error(request, 'Invalid username or password.')
+        messages.error(request, 'Invalid username/email or password.')
     return render(request, 'core_app/login.html')
 
 
@@ -47,10 +58,11 @@ def register_view(request):
     markets = Market.objects.filter(active=True)
     errors = {}
     if request.method == 'POST':
-        first_name = request.POST.get('first_name', '').strip(); last_name = request.POST.get('last_name', '').strip(); username = request.POST.get('username', '').strip(); email = request.POST.get('email', '').strip(); password = request.POST.get('password', ''); confirm_password = request.POST.get('confirm_password', ''); role = request.POST.get('role', 'BUYER'); phone = request.POST.get('phone', '').strip()
+        first_name = request.POST.get('first_name', '').strip(); last_name = request.POST.get('last_name', '').strip(); username = request.POST.get('username', '').strip(); email = request.POST.get('email', '').strip().lower(); password = request.POST.get('password', ''); confirm_password = request.POST.get('confirm_password', ''); role = request.POST.get('role', 'BUYER'); phone = request.POST.get('phone', '').strip()
         if not first_name: errors['first_name'] = 'First name is required.'
         if not username: errors['username'] = 'Username is required.'
         if User.objects.filter(username=username).exists(): errors['username'] = 'Username already exists.'
+        if email and User.objects.filter(email__iexact=email).exists(): errors['email'] = 'An account with this email already exists.'
         if password != confirm_password: errors['password'] = 'Passwords do not match.'
         if len(password) < 6: errors['password'] = 'Password must be at least 6 characters.'
         if not errors:
@@ -70,7 +82,7 @@ def logout_view(request):
 def profile_view(request):
     profile = request.user.profile
     if request.method == 'POST':
-        request.user.first_name = request.POST.get('first_name', '').strip(); request.user.last_name = request.POST.get('last_name', '').strip(); request.user.email = request.POST.get('email', '').strip(); request.user.save()
+        request.user.first_name = request.POST.get('first_name', '').strip(); request.user.last_name = request.POST.get('last_name', '').strip(); request.user.email = request.POST.get('email', '').strip().lower(); request.user.save()
         profile.phone = request.POST.get('phone', '').strip(); profile.theme_preference = request.POST.get('theme_preference', profile.theme_preference)
         image = request.FILES.get('profile_image')
         err = validate_image_upload(image)

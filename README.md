@@ -39,3 +39,8 @@ python manage.py runserver
 ## Local media storage (development)
 Run `python manage.py create_media_folders` to scaffold temporary upload folders under `media/`.
 Use cloud object storage (S3, DO Spaces, Cloudinary, etc.) in production.
+
+## Authentication
+- Users can log in with either **username + password** or **email + password**.
+- Duplicate emails are blocked during registration at the application-validation level.
+- Run `python manage.py check_duplicate_emails` before enforcing a database-level unique email constraint.

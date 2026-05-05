@@ -2,14 +2,22 @@
 {% block title %}Login{% endblock %}
 {% block content %}
 <div class="auth-shell">
-  <div class="card auth-card">
+  <div class="card auth-card neon-login-card">
     <div class="section-head"><h3>Welcome back</h3><span class="pill">Login</span></div>
+    <p class="muted">Sign in with your username or email to continue.</p>
     <form method="POST" class="form-grid">
       {% csrf_token %}
-      <label><span>Username</span><input type="text" name="username" required></label>
-      <label><span>Password</span><input type="password" name="password" required></label>
+      <label>
+        <span>Username or Email</span>
+        <input type="text" name="username" id="username" placeholder="Enter username or email" required autocomplete="username">
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" id="password" required autocomplete="current-password">
+      </label>
       <button class="btn btn-primary" type="submit">Sign in</button>
     </form>
+    <p class="muted">New to MarketFlow Africa? <a href="{% url 'register' %}">Create an account</a>.</p>
   </div>
 </div>
 {% endblock %}
