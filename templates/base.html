@@ -50,7 +50,7 @@
             <span>⌕</span>
             <input class="search-input" type="text" placeholder="Search markets, sellers, products, orders..." />
           </div>
-          <div class='location-chip' id='locationDisplay' data-current-city='{{ current_city|default:"" }}'>📍 {{ current_city|default:'Set location' }} <button type='button' id='openLocationModal' class='tiny-link'>Change</button></div>
+          <div class='location-chip' id='locationDisplay' data-current-city='{{ current_city|default:"" }}'>📍 {{ current_city|default:'Set location' }} <button type='button' id='openLocationModal' class='btn btn-pill btn-secondary btn-sm'>Change</button></div>
         </div>
         <div class="topbar-right">
           <button class="icon-btn" aria-label="Notifications">🔔<span class="badge-dot"></span></button>
@@ -81,14 +81,14 @@
 
   <div id='locationModal' class='location-modal hidden'>
     <div class='location-card'>
-      <button id='closeLocationModal' class='icon-btn'>✕</button>
+      <button id='closeLocationModal' class='btn btn-pill btn-secondary btn-sm'>Close</button>
       <h3>Change Location</h3>
       <form id='manualLocationForm' method='post' action='{% url "manual_location_update" %}'>
         {% csrf_token %}
         <input name='city' placeholder='City' required>
-        <input name='region' placeholder='Region/State'>
-        <input name='country' placeholder='Country'>
-        <button type='submit' class='btn-primary'>Save location</button>
+        <input name='region' placeholder='State/Region' required>
+        <input name='country' placeholder='Country' required>
+        <button type='submit' class='btn btn-pill btn-primary'>Save location</button>
       </form>
       <p class='muted' id='locationHelpText'></p>
     </div>

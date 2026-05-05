@@ -21,7 +21,16 @@ def reverse_geocode_coordinates(latitude, longitude):
         location = geolocator.reverse(f'{latitude}, {longitude}', language='en', exactly_one=True)
         if location and location.raw:
             address = location.raw.get('address', {})
-            city = address.get('city') or address.get('town') or address.get('village') or address.get('county') or city
+            city = (
+                address.get('city')
+                or address.get('town')
+                or address.get('village')
+                or address.get('municipality')
+                or address.get('suburb')
+                or address.get('hamlet')
+                or address.get('county')
+                or city
+            )
             region = address.get('state') or address.get('region') or ''
             country = address.get('country') or ''
     except (GeocoderServiceError, ValueError, TypeError):
