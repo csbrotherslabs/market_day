@@ -50,6 +50,7 @@
             <span>⌕</span>
             <input class="search-input" type="text" placeholder="Search markets, sellers, products, orders..." />
           </div>
+          <div class='location-chip' id='locationDisplay' data-current-city='{{ current_city|default:"" }}'>📍 {{ current_city|default:'Set location' }} <button type='button' id='openLocationModal' class='tiny-link'>Change</button></div>
         </div>
         <div class="topbar-right">
           <button class="icon-btn" aria-label="Notifications">🔔<span class="badge-dot"></span></button>
@@ -77,6 +78,23 @@
     </main>
   </div>
 
+
+  <div id='locationModal' class='location-modal hidden'>
+    <div class='location-card'>
+      <button id='closeLocationModal' class='icon-btn'>✕</button>
+      <h3>Change Location</h3>
+      <form id='manualLocationForm' method='post' action='{% url "manual_location_update" %}'>
+        {% csrf_token %}
+        <input name='city' placeholder='City' required>
+        <input name='region' placeholder='Region/State'>
+        <input name='country' placeholder='Country'>
+        <button type='submit' class='btn-primary'>Save location</button>
+      </form>
+      <p class='muted' id='locationHelpText'></p>
+    </div>
+  </div>
+
   <script src="{% static 'js/app.js' %}"></script>
+  <script src="{% static 'core_app/js/location.js' %}"></script>
 </body>
 </html>

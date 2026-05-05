@@ -11,9 +11,14 @@ urlpatterns = [
     path('accounts/register/', core_views.register_view, name='register'),
     path('accounts/logout/', core_views.logout_view, name='logout'),
     path('accounts/profile/', core_views.profile_view, name='profile'),
+    path('', include('core_app.urls')),
     path('buyers/', include('buyers_app.urls')),
     path('sellers/', include('sellers_app.urls')),
     path('drivers/', include('drivers_app.urls')),
     path('qa/', include('qa_app.urls')),
     path('adminops/', include('adminops_app.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

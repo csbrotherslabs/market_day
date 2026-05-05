@@ -1,24 +1,5 @@
-# Python
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-
-# Django
-*.log
 db.sqlite3
-media/
-
-# Environment variables
-.env
-
-# Static files (if collected)
-staticfiles/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
+media/*
+!media/**/.gitkeep

@@ -35,3 +35,7 @@ python manage.py runserver
 - Sidebar is collapsible.
 - All role workflows use function-based views.
 - Forms are built with standard HTML forms and manual POST handling.
+
+## Local media storage (development)
+Run `python manage.py create_media_folders` to scaffold temporary upload folders under `media/`.
+Use cloud object storage (S3, DO Spaces, Cloudinary, etc.) in production.
