@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<div class="two-col-grid">
+  <div class="card"><div class="section-head"><h3>Order #{{ order.id }}</h3><span class="pill">{{ order.get_status_display }}</span></div><div class="stack-list">{% for item in order.items.all %}<div class="list-card no-link"><div><h4>{{ item.product.name }}</h4><p>Requested: {{ item.qty_requested }}{% if item.qty_approved %} · Approved: {{ item.qty_approved }}{% endif %}</p></div><span class="pill">GHS {{ item.line_total }}</span></div>{% endfor %}</div></div>
+  <div class="card"><div class="section-head"><h3>Order actions</h3><span class="pill">Track</span></div><div class="summary-block"><div><span>Total</span><strong>GHS {{ order.total }}</strong></div><div><span>Delivery phone</span><strong>{{ order.delivery_phone }}</strong></div><div><span>Address</span><strong>{{ order.delivery_address }}</strong></div></div>{% if qa_report %}<div class="note-box">QA Result: {{ qa_report.result }}{% if qa_report.notes %}<br>{{ qa_report.notes }}{% endif %}</div>{% endif %}{% if assignment %}<div class="note-box">Driver: {{ assignment.driver.get_full_name|default:assignment.driver.username }} · {{ assignment.status }}</div>{% endif %}<div class="hero-actions"><a class="btn btn-secondary" href="{% url 'create_dispute' order.id %}">Open dispute</a><a class="btn btn-primary" href="{% url 'create_rating' order.id %}">Rate order</a></div></div>
+</div>
+{% endblock %}

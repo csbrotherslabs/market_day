@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>Users</h3><span class="pill">Admin</span></div><div class="stack-list">{% for user in users %}<div class="list-card no-link"><div><h4>{{ user.get_full_name|default:user.username }}</h4><p>{{ user.username }} · {{ user.profile.get_role_display }}</p></div><span class="pill">{% if user.profile.is_verified %}Verified{% else %}Unverified{% endif %}</span></div>{% endfor %}</div></div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-shell">
+  <div class="card auth-card wide-card">
+    <div class="section-head"><h3>Create your account</h3><span class="pill">New user</span></div>
+    <form method="POST" class="form-grid two-col-form">
+      {% csrf_token %}
+      <label><span>First name</span><input type="text" name="first_name" required></label>
+      <label><span>Last name</span><input type="text" name="last_name"></label>
+      <label><span>Username</span><input type="text" name="username" required></label>
+      <label><span>Email</span><input type="email" name="email"></label>
+      <label><span>Phone</span><input type="text" name="phone"></label>
+      <label><span>Role</span>
+        <select name="role">
+          <option value="BUYER">Buyer</option>
+          <option value="SELLER">Seller</option>
+          <option value="DRIVER">Driver</option>
+          <option value="QA">QA Analyst</option>
+          <option value="ADMIN_STAFF">Admin Staff</option>
+        </select>
+      </label>
+      <label><span>Password</span><input type="password" name="password" required></label>
+      <label><span>Confirm password</span><input type="password" name="confirm_password" required></label>
+      <div class="full-span"><button class="btn btn-primary" type="submit">Create account</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

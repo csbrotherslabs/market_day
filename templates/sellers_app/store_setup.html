@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Store Setup{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>Store setup</h3><span class="pill">Seller</span></div><form method="POST" class="form-grid two-col-form">{% csrf_token %}<label><span>Market</span><select name="market"><option value="">Select market</option>{% for market in markets %}<option value="{{ market.id }}" {% if seller_profile.market_id == market.id %}selected{% endif %}>{{ market.name }}</option>{% endfor %}</select></label><label><span>Stall name</span><input type="text" name="stall_name" value="{{ seller_profile.stall_name }}"></label><label><span>Stall number</span><input type="text" name="stall_number" value="{{ seller_profile.stall_number }}"></label><label class="full-span"><span>Description</span><textarea name="description" rows="4">{{ seller_profile.description }}</textarea></label><div class="full-span"><button class="btn btn-primary" type="submit">Save store</button></div></form></div>
+{% endblock %}

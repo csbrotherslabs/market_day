@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-head"><h3>Checkout</h3><span class="pill">Secure</span></div>
+  <form method="POST" class="form-grid two-col-form">
+    {% csrf_token %}
+    <label class="full-span"><span>Delivery address</span><input type="text" name="delivery_address" required></label>
+    <label><span>Landmark</span><input type="text" name="delivery_landmark"></label>
+    <label><span>Delivery phone</span><input type="text" name="delivery_phone" required></label>
+    <div class="card inset-card full-span"><div class="summary-block"><div><span>Subtotal</span><strong>GHS {{ subtotal }}</strong></div><div><span>Delivery fee</span><strong>GHS {{ delivery_fee }}</strong></div><div><span>Total</span><strong>GHS {{ total }}</strong></div></div></div>
+    <div class="full-span"><button class="btn btn-primary" type="submit">Place order</button></div>
+  </form>
+</div>
+{% endblock %}

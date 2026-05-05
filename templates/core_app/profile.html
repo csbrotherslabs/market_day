@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-head"><h3>Profile</h3><span class="pill">{{ profile.get_role_display }}</span></div>
+  <form method="POST" enctype="multipart/form-data" class="form-grid two-col-form">
+    {% csrf_token %}
+    <label><span>First name</span><input type="text" name="first_name" value="{{ user.first_name }}"></label>
+    <label><span>Last name</span><input type="text" name="last_name" value="{{ user.last_name }}"></label>
+    <label><span>Email</span><input type="email" name="email" value="{{ user.email }}"></label>
+    <label><span>Phone</span><input type="text" name="phone" value="{{ profile.phone }}"></label>
+    <label><span>Theme preference</span>
+      <select name="theme_preference">
+        <option value="dark" {% if profile.theme_preference == 'dark' %}selected{% endif %}>Dark</option>
+        <option value="light" {% if profile.theme_preference == 'light' %}selected{% endif %}>Light</option>
+      </select>
+    </label>
+    <label><span>Avatar</span><input type="file" name="avatar"></label>
+    <div class="full-span"><button class="btn btn-primary" type="submit">Save profile</button></div>
+  </form>
+</div>
+{% endblock %}

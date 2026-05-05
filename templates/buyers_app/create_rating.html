@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Rate Order{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>Rate Order #{{ order.id }}</h3><span class="pill">Feedback</span></div><form method="POST" class="form-grid">{% csrf_token %}<label><span>Score</span><select name="score"><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label><label><span>Comment</span><textarea name="comment" rows="4"></textarea></label><button class="btn btn-primary" type="submit">Submit rating</button></form></div>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Admin Orders{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>All orders</h3><span class="pill">Admin</span></div><div class="stack-list">{% for order in orders %}<a class="list-card" href="{% url 'admin_order_detail' order.id %}"><div><h4>Order #{{ order.id }}</h4><p>{{ order.buyer.username }} · {{ order.delivery_address }}</p></div><span class="pill">{{ order.get_status_display }}</span></a>{% empty %}<div class="empty-state">No orders found.</div>{% endfor %}</div></div>
+{% endblock %}

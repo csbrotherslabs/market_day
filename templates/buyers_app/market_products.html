@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ market.name }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-head"><h3>{{ market.name }}</h3><span class="pill">{{ market.city }}</span></div>
+  <div class="product-grid">
+    {% for product in products %}
+    <div class="product-card">
+      <div class="product-thumb">🛍</div>
+      <h4>{{ product.name }}</h4>
+      <p>{{ product.seller.stall_name|default:product.seller.user.username }}</p>
+      <div class="price-row"><span>GHS {{ product.price }}</span><small>/ {{ product.unit }}</small></div>
+      <form method="POST" action="{% url 'add_to_cart' product.id %}" class="inline-form">
+        {% csrf_token %}
+        <input type="number" name="qty" value="1" min="1" class="small-input">
+        <button class="btn btn-primary" type="submit">Add to cart</button>
+      </form>
+    </div>
+    {% empty %}
+    <div class="empty-state">No active products in this market.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

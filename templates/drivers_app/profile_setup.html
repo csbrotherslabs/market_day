@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Driver Profile{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>Driver profile setup</h3><span class="pill">Driver</span></div><form method="POST" class="form-grid two-col-form">{% csrf_token %}<label><span>Vehicle type</span><input type="text" name="vehicle_type" value="{{ profile.vehicle_type }}"></label><label><span>License ID</span><input type="text" name="license_id" value="{{ profile.license_id }}"></label><label class="full-span"><span>Region</span><input type="text" name="region" value="{{ profile.region }}"></label><div class="full-span"><button class="btn btn-primary" type="submit">Save profile</button></div></form></div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-shell">
+  <div class="card auth-card">
+    <div class="section-head"><h3>Welcome back</h3><span class="pill">Login</span></div>
+    <form method="POST" class="form-grid">
+      {% csrf_token %}
+      <label><span>Username</span><input type="text" name="username" required></label>
+      <label><span>Password</span><input type="password" name="password" required></label>
+      <button class="btn btn-primary" type="submit">Sign in</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

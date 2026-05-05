@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}MarketFlow Africa{% endblock %}
+{% block content %}
+<section class="hero-grid">
+  <div class="card hero-card">
+    <div class="eyebrow">Next-generation market commerce</div>
+    <h2>Buy from local sellers, verify quality, and dispatch faster with a futuristic operations stack.</h2>
+    <p>MarketFlow Africa is designed for buyers, sellers, QA analysts, drivers, and admins in one clean workflow.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{% url 'register' %}">Create account</a>
+      {% if user.is_authenticated and user.profile.role == 'BUYER' %}
+      <a class="btn btn-secondary" href="{% url 'buyer_dashboard' %}">Open dashboard</a>
+      {% else %}
+      <a class="btn btn-secondary" href="{% url 'login' %}">Sign in</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-head"><h3>Platform overview</h3><span class="pill">Live</span></div>
+    <div class="stats-grid">
+      <div class="metric"><div class="label">Markets</div><div class="value">{{ stats.markets }}</div><div class="delta">Growing local reach</div></div>
+      <div class="metric"><div class="label">Products</div><div class="value">{{ stats.products }}</div><div class="delta">Ready to shop</div></div>
+      <div class="metric"><div class="label">Sellers</div><div class="value">{{ stats.sellers }}</div><div class="delta">Verified stores</div></div>
+      <div class="metric"><div class="label">Avg delivery</div><div class="value">{{ stats.avg_delivery }}</div><div class="delta">Fast urban delivery</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="two-col-grid">
+  <div class="card">
+    <div class="section-head"><h3>Featured markets</h3><span class="pill">Explore</span></div>
+    <div class="stack-list">
+      {% for market in markets %}
+      <a class="list-card" href="{% url 'buyer_market_products' market.id %}">
+        <div>
+          <h4>{{ market.name }}</h4>
+          <p>{{ market.city }}, {{ market.region }}{% if market.description %} · {{ market.description }}{% endif %}</p>
+        </div>
+        <span class="pill">Open</span>
+      </a>
+      {% empty %}
+      <div class="empty-state">No markets yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-head"><h3>Popular products</h3><span class="pill">Hot</span></div>
+    <div class="product-grid compact-grid">
+      {% for product in products %}
+      <div class="product-card">
+        <div class="product-thumb">🛒</div>
+        <h4>{{ product.name }}</h4>
+        <p>{{ product.seller.stall_name|default:product.seller.user.username }}</p>
+        <div class="price-row"><span>GHS {{ product.price }}</span><small>/ {{ product.unit }}</small></div>
+      </div>
+      {% empty %}
+      <div class="empty-state">No products loaded yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

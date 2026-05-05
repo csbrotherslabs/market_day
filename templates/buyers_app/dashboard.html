@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Buyer Dashboard{% endblock %}
+{% block content %}
+<section class="hero-grid">
+  <div class="card hero-card small-hero"><div class="eyebrow">Buyer workspace</div><h2>Shop local markets with a cleaner checkout and tracking experience.</h2></div>
+  <div class="card"><div class="section-head"><h3>Quick actions</h3><span class="pill">Buyer</span></div><div class="hero-actions"><a class="btn btn-primary" href="{% url 'buyer_cart' %}">Open cart</a><a class="btn btn-secondary" href="{% url 'buyer_orders' %}">View orders</a></div></div>
+</section>
+<section class="two-col-grid">
+<div class="card"><div class="section-head"><h3>Markets</h3><span class="pill">Browse</span></div><div class="stack-list">{% for market in markets %}<a class="list-card" href="{% url 'buyer_market_products' market.id %}"><div><h4>{{ market.name }}</h4><p>{{ market.city }}, {{ market.region }}</p></div><span class="pill">Shop</span></a>{% endfor %}</div></div>
+<div class="card"><div class="section-head"><h3>Recent orders</h3><span class="pill">Tracking</span></div><div class="stack-list">{% for order in orders %}<a class="list-card" href="{% url 'buyer_order_detail' order.id %}"><div><h4>Order #{{ order.id }}</h4><p>{{ order.get_status_display }} · GHS {{ order.total }}</p></div><span class="pill">Open</span></a>{% empty %}<div class="empty-state">You have no orders yet.</div>{% endfor %}</div></div>
+</section>
+{% endblock %}

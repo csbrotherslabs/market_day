@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}MarketFlow Africa{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">M</div>
+        <div class="brand-copy">
+          <h1>MarketFlow Africa</h1>
+          <p>Neon-tech market logistics</p>
+        </div>
+      </div>
+      <div class="menu-title">Navigation</div>
+      <nav class="nav">
+        <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}"><span class="nav-icon">⌂</span><span class="nav-label">Home</span></a>
+        {% if user.is_authenticated and user.profile.role == 'BUYER' %}
+        <a href="{% url 'buyer_dashboard' %}"><span class="nav-icon">◫</span><span class="nav-label">Buyer Dashboard</span></a>
+        <a href="{% url 'buyer_cart' %}"><span class="nav-icon">◌</span><span class="nav-label">Cart</span></a>
+        <a href="{% url 'buyer_orders' %}"><span class="nav-icon">◴</span><span class="nav-label">Orders</span></a>
+        {% endif %}
+        {% if user.is_authenticated %}
+          {% if user.profile.role == 'SELLER' or user.profile.role == 'ADMIN_STAFF' %}
+          <a href="{% url 'seller_dashboard' %}"><span class="nav-icon">▣</span><span class="nav-label">Seller</span></a>
+          {% endif %}
+          {% if user.profile.role == 'QA' or user.profile.role == 'ADMIN_STAFF' %}
+          <a href="{% url 'qa_dashboard' %}"><span class="nav-icon">✓</span><span class="nav-label">Quality Control</span></a>
+          {% endif %}
+          {% if user.profile.role == 'DRIVER' or user.profile.role == 'ADMIN_STAFF' %}
+          <a href="{% url 'driver_dashboard' %}"><span class="nav-icon">⇄</span><span class="nav-label">Drivers</span></a>
+          {% endif %}
+          {% if user.profile.role == 'ADMIN_STAFF' %}
+          <a href="{% url 'admin_dashboard' %}"><span class="nav-icon">⚙</span><span class="nav-label">Admin Ops</span></a>
+          {% endif %}
+        {% endif %}
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn" id="collapseBtn" aria-label="Collapse sidebar">☰</button>
+          <div class="search-wrap">
+            <span>⌕</span>
+            <input class="search-input" type="text" placeholder="Search markets, sellers, products, orders..." />
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" aria-label="Notifications">🔔<span class="badge-dot"></span></button>
+          <button class="icon-btn" aria-label="Messages">✉<span class="badge-dot"></span></button>
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">◐</button>
+          <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}" class="profile profile-link">
+            <div class="avatar">{% if user.is_authenticated %}{{ user.first_name|default:user.username|slice:':1'|upper }}{% else %}U{% endif %}</div>
+            <div class="profile-copy">
+              <strong>{% if user.is_authenticated %}{{ user.first_name|default:user.username }}{% else %}Guest User{% endif %}</strong>
+              <span>{% if user.is_authenticated %}{{ user.profile.get_role_display }}{% else %}Sign in{% endif %}</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      {% if messages %}
+      <div class="message-stack">
+        {% for message in messages %}
+          <div class="flash {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

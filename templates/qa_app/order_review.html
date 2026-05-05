@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}QA Review{% endblock %}
+{% block content %}
+<div class="two-col-grid"><div class="card"><div class="section-head"><h3>Order #{{ order.id }}</h3><span class="pill">QA</span></div><div class="stack-list">{% for item in order.items.all %}<div class="list-card no-link"><div><h4>{{ item.product.name }}</h4><p>Requested: {{ item.qty_requested }}</p></div><span class="pill">GHS {{ item.line_total }}</span></div>{% endfor %}</div></div><div class="card"><div class="section-head"><h3>Submit review</h3><span class="pill">Decision</span></div><form method="POST" class="form-grid">{% csrf_token %}<label><span>Result</span><select name="result"><option value="APPROVED">Approved</option><option value="PARTIAL">Partial</option><option value="REJECTED">Rejected</option></select></label><label><span>Notes</span><textarea name="notes" rows="5">{% if existing_report %}{{ existing_report.notes }}{% endif %}</textarea></label><button class="btn btn-primary" type="submit">Save QA decision</button></form></div></div>
+{% endblock %}

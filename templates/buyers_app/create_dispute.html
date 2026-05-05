@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Create Dispute{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>Open dispute for Order #{{ order.id }}</h3><span class="pill">Support</span></div><form method="POST" class="form-grid">{% csrf_token %}<label><span>Category</span><input type="text" name="category" placeholder="Missing item, bad quality, delayed delivery" required></label><label><span>Details</span><textarea name="details" rows="5" required></textarea></label><button class="btn btn-primary" type="submit">Submit dispute</button></form></div>
+{% endblock %}

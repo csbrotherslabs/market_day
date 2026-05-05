@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Driver Dashboard{% endblock %}
+{% block content %}
+<section class="two-col-grid"><div class="card"><div class="section-head"><h3>Driver tools</h3><span class="pill">Driver</span></div><div class="hero-actions"><a class="btn btn-primary" href="{% url 'driver_profile_setup' %}">Update profile</a></div></div><div class="card"><div class="section-head"><h3>Assignments</h3><span class="pill">Routes</span></div><div class="stack-list">{% for assignment in assignments %}<a class="list-card" href="{% url 'driver_assignment_detail' assignment.id %}"><div><h4>Order #{{ assignment.order.id }}</h4><p>{{ assignment.order.delivery_address }}</p></div><span class="pill">{{ assignment.status }}</span></a>{% empty %}<div class="empty-state">No assignments found.</div>{% endfor %}</div></div></section>
+{% endblock %}

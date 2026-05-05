@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>Order history</h3><span class="pill">Buyer</span></div><div class="stack-list">{% for order in orders %}<a class="list-card" href="{% url 'buyer_order_detail' order.id %}"><div><h4>Order #{{ order.id }}</h4><p>{{ order.created_at|date:'M d, Y H:i' }} · {{ order.get_status_display }}</p></div><span class="pill">GHS {{ order.total }}</span></a>{% empty %}<div class="empty-state">No orders found.</div>{% endfor %}</div></div>
+{% endblock %}

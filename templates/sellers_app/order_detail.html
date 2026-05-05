@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Seller Order Detail{% endblock %}
+{% block content %}
+<div class="two-col-grid"><div class="card"><div class="section-head"><h3>Order #{{ order.id }}</h3><span class="pill">{{ order.get_status_display }}</span></div><div class="stack-list">{% for item in order.items.all %}<div class="list-card no-link"><div><h4>{{ item.product.name }}</h4><p>Qty: {{ item.qty_requested }}</p></div><span class="pill">GHS {{ item.line_total }}</span></div>{% endfor %}</div></div><div class="card"><div class="section-head"><h3>Actions</h3><span class="pill">Workflow</span></div><form method="POST" class="inline-action-form">{% csrf_token %}<button class="btn btn-primary" name="action" value="confirm">Confirm order</button><button class="btn btn-secondary" name="action" value="qa_pending">Send to QA</button><button class="btn btn-secondary" name="action" value="cancel">Cancel order</button></form></div></div>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Disputes{% endblock %}
+{% block content %}
+<div class="card"><div class="section-head"><h3>Disputes</h3><span class="pill">Admin</span></div><div class="stack-list">{% for dispute in disputes %}<div class="list-card no-link block-card"><div><h4>Order #{{ dispute.order.id }} - {{ dispute.category }}</h4><p>{{ dispute.details }}</p><p>Status: {{ dispute.get_status_display }}</p></div><form method="POST" class="form-grid mini-form">{% csrf_token %}<input type="hidden" name="dispute_id" value="{{ dispute.id }}"><label><span>Status</span><select name="status"><option value="OPEN">Open</option><option value="IN_REVIEW">In Review</option><option value="RESOLVED">Resolved</option><option value="REJECTED">Rejected</option></select></label><label><span>Resolution notes</span><textarea name="resolution_notes" rows="3"></textarea></label><button class="btn btn-primary" type="submit">Update dispute</button></form></div>{% empty %}<div class="empty-state">No disputes found.</div>{% endfor %}</div></div>
+{% endblock %}
