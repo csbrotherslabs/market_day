@@ -3,7 +3,7 @@ from django.db import models
 from core_app.utils.uploads import delivery_proof_image_path, profile_image_upload_path, qa_inspection_image_path, review_image_path, seller_product_image_path, seller_profile_image_path, seller_store_image_path
 
 class Profile(models.Model):
-    ROLE_CHOICES = [('BUYER','Buyer'),('SELLER','Seller'),('DRIVER','Driver'),('QA','QA Analyst'),('ADMIN_STAFF','Admin Staff')]
+    ROLE_CHOICES = [('BUYER','Buyer'),('SELLER','Seller'),('DRIVER','Driver'),('QA','QA Analyst'),('SUPER_USER','Super User'),('ADMIN_STAFF','Admin Staff')]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='BUYER')
     phone = models.CharField(max_length=30, blank=True)

@@ -10,7 +10,9 @@ def role_required(roles):
             if not request.user.is_authenticated:
                 return redirect('login')
             user_role = getattr(getattr(request.user, 'profile', None), 'role', None)
-            if user_role not in roles and user_role != 'ADMIN_STAFF':
+            super_user_roles = {'BUYER', 'SELLER', 'DRIVER', 'QA'}
+            is_super_user_access = user_role == 'SUPER_USER' and bool(super_user_roles.intersection(set(roles)))
+            if user_role not in roles and user_role != 'ADMIN_STAFF' and not is_super_user_access:
                 messages.error(request, 'You do not have access to that page.')
                 return redirect('home')
             return view_func(request, *args, **kwargs)
