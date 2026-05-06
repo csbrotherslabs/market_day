@@ -20,12 +20,12 @@
       <div class="menu-title">Navigation</div>
       <nav class="nav">
         <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}"><span class="nav-icon">⌂</span><span class="nav-label">Home</span></a>
-        {% if user.is_authenticated and user.profile.role == 'BUYER' %}
-        <a href="{% url 'buyer_dashboard' %}"><span class="nav-icon">◫</span><span class="nav-label">Buyer Dashboard</span></a>
-        <a href="{% url 'buyer_cart' %}"><span class="nav-icon">◌</span><span class="nav-label">Cart</span></a>
-        <a href="{% url 'buyer_orders' %}"><span class="nav-icon">◴</span><span class="nav-label">Orders</span></a>
-        {% endif %}
         {% if user.is_authenticated %}
+          {% if user.profile.role == 'BUYER' or user.profile.role == 'ADMIN_STAFF' %}
+          <a href="{% url 'buyer_dashboard' %}"><span class="nav-icon">◫</span><span class="nav-label">Buyer Dashboard</span></a>
+          <a href="{% url 'buyer_cart' %}"><span class="nav-icon">◌</span><span class="nav-label">Cart</span></a>
+          <a href="{% url 'buyer_orders' %}"><span class="nav-icon">◴</span><span class="nav-label">Orders</span></a>
+          {% endif %}
           {% if user.profile.role == 'SELLER' or user.profile.role == 'ADMIN_STAFF' %}
           <a href="{% url 'seller_dashboard' %}"><span class="nav-icon">▣</span><span class="nav-label">Seller</span></a>
           {% endif %}
