@@ -2,6 +2,8 @@ const body = document.body;
 const toggle = document.getElementById('themeToggle');
 const collapseBtn = document.getElementById('collapseBtn');
 const appShell = document.getElementById('appShell');
+const profileMenuToggle = document.getElementById('profileMenuToggle');
+const profileMenu = document.getElementById('profileMenu');
 
 const savedTheme = localStorage.getItem('marketflow-theme');
 const savedSidebar = localStorage.getItem('marketflow-sidebar');
@@ -37,3 +39,18 @@ window.addEventListener('resize', () => {
     appShell.classList.add('collapsed');
   }
 });
+
+if (profileMenuToggle && profileMenu) {
+  profileMenuToggle.addEventListener('click', () => {
+    const willOpen = profileMenu.classList.contains('hidden');
+    profileMenu.classList.toggle('hidden');
+    profileMenuToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!profileMenu.contains(event.target) && !profileMenuToggle.contains(event.target)) {
+      profileMenu.classList.add('hidden');
+      profileMenuToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}

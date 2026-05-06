@@ -63,6 +63,12 @@ img { max-width: 100%; }
 .badge-dot { position:absolute; top:10px; right:10px; width:10px; height:10px; border-radius:50%; background:var(--danger); }
 .profile { display:flex; align-items:center; gap:12px; padding:6px 8px 6px 6px; border-radius:18px; background:rgba(255,255,255,0.04); border:1px solid var(--border); }
 .profile-link { text-decoration:none; }
+.profile-trigger { cursor:pointer; color:var(--text); }
+.profile-dropdown { position:relative; }
+.profile-menu { position:absolute; right:0; top:calc(100% + 10px); min-width:220px; background:var(--panel-strong); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); padding:8px; display:grid; gap:4px; z-index:1200; }
+.profile-menu.hidden { display:none; }
+.profile-menu a { display:block; padding:10px 12px; border-radius:12px; font-size:14px; }
+.profile-menu a:hover { background:linear-gradient(135deg, var(--primary-soft), var(--secondary-soft)); }
 .profile-copy strong { display:block; font-size:13px; }
 .card { background: var(--panel); border:1px solid var(--border); border-radius:30px; padding:24px; backdrop-filter: blur(22px); box-shadow: var(--shadow); }
 .inset-card { background: rgba(255,255,255,0.03); }
