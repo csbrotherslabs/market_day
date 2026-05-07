@@ -17,7 +17,7 @@
           <h1>Market Day</h1>
         </div>
       </div>
-      <div class='location-chip location-chip-sidebar' id='locationDisplay' data-current-city='{{ current_city|default:"" }}'>📍 {{ current_city|default:'Set location' }} <button type='button' id='openLocationModal' class='btn btn-pill btn-secondary btn-sm'>Change</button></div>
+      <div class='location-chip location-chip-sidebar' id='locationDisplay' data-current-city='{{ current_city|default:"" }}' data-is-authenticated='{% if user.is_authenticated %}true{% else %}false{% endif %}' data-user-role='{% if user.is_authenticated %}{{ user.profile.role }}{% endif %}'>📍 {{ current_city|default:'Set location' }} <button type='button' id='openLocationModal' class='btn btn-pill btn-secondary btn-sm'>Change</button></div>
       <div class="menu-title">Navigation</div>
       <nav class="nav">
         <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}"><span class="nav-icon"><i class="fa-solid fa-house fa-fw" aria-hidden="true"></i></span><span class="nav-label">Home</span></a>
