@@ -7,7 +7,7 @@ from core_app.models import DeliveryAssignment, DriverProfile
 
 
 @login_required
-@role_required(['DRIVER'])
+@role_required(['DRIVER', 'SUPER_USER', 'ADMIN_STAFF'])
 def dashboard(request):
     DriverProfile.objects.get_or_create(user=request.user)
     assignments = DeliveryAssignment.objects.filter(driver=request.user)
@@ -15,7 +15,7 @@ def dashboard(request):
 
 
 @login_required
-@role_required(['DRIVER'])
+@role_required(['DRIVER', 'SUPER_USER', 'ADMIN_STAFF'])
 def profile_setup(request):
     profile, created = DriverProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
@@ -29,7 +29,7 @@ def profile_setup(request):
 
 
 @login_required
-@role_required(['DRIVER'])
+@role_required(['DRIVER', 'SUPER_USER', 'ADMIN_STAFF'])
 def assignment_detail(request, assignment_id):
     assignment = get_object_or_404(DeliveryAssignment, id=assignment_id, driver=request.user)
     if request.method == 'POST':
