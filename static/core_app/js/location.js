@@ -2,6 +2,7 @@
   const locEl=document.getElementById('locationDisplay'); if(!locEl) return;
   const csrf=document.querySelector('[name=csrfmiddlewaretoken]')?.value;
   const help=document.getElementById('locationHelpText');
+  const isBuyer=locEl.dataset.isAuthenticated==='true' && locEl.dataset.userRole==='BUYER';
   function setLabel(city){locEl.childNodes[0].textContent=`📍 ${city||'Set location'} `;}
   function showModal(){modal?.classList.remove('hidden');}
   function hideModal(){modal?.classList.add('hidden');}
@@ -14,7 +15,7 @@
       if(help && d.city && d.city !== 'Unknown Location') help.textContent='';
     },()=>{
       if(help) help.textContent='Location access denied. Please set location manually.';
-      showModal();
+      if(isBuyer) showModal();
     },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
   }
   document.getElementById('openLocationModal')?.addEventListener('click',showModal);
