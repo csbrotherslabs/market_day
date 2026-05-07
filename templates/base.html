@@ -20,24 +20,24 @@
       <div class='location-chip location-chip-sidebar' id='locationDisplay' data-current-city='{{ current_city|default:"" }}'>📍 {{ current_city|default:'Set location' }} <button type='button' id='openLocationModal' class='btn btn-pill btn-secondary btn-sm'>Change</button></div>
       <div class="menu-title">Navigation</div>
       <nav class="nav">
-        <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span class="nav-label">Home</span></a>
+        <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}"><span class="nav-icon"><i class="fa-solid fa-house fa-fw" aria-hidden="true"></i></span><span class="nav-label">Home</span></a>
         {% if user.is_authenticated %}
           {% if user.profile.role == 'BUYER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-          <a href="{% url 'buyer_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-table-columns" aria-hidden="true"></i></span><span class="nav-label">Buyer Dashboard</span></a>
-          <a href="{% url 'buyer_cart' %}"><span class="nav-icon"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i></span><span class="nav-label">Cart</span></a>
-          <a href="{% url 'buyer_orders' %}"><span class="nav-icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span><span class="nav-label">Orders</span></a>
+          <a href="{% url 'buyer_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-table-columns fa-fw" aria-hidden="true"></i></span><span class="nav-label">Buyer Dashboard</span></a>
+          <a href="{% url 'buyer_cart' %}"><span class="nav-icon"><i class="fa-solid fa-cart-shopping fa-fw" aria-hidden="true"></i></span><span class="nav-label">Cart</span></a>
+          <a href="{% url 'buyer_orders' %}"><span class="nav-icon"><i class="fa-solid fa-box fa-fw" aria-hidden="true"></i></span><span class="nav-label">Orders</span></a>
           {% endif %}
           {% if user.profile.role == 'SELLER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-          <a href="{% url 'seller_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-store" aria-hidden="true"></i></span><span class="nav-label">Seller</span></a>
+          <a href="{% url 'seller_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-store fa-fw" aria-hidden="true"></i></span><span class="nav-label">Seller</span></a>
           {% endif %}
           {% if user.profile.role == 'QA' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-          <a href="{% url 'qa_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span><span class="nav-label">Quality Control</span></a>
+          <a href="{% url 'qa_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-circle-check fa-fw" aria-hidden="true"></i></span><span class="nav-label">Quality Control</span></a>
           {% endif %}
           {% if user.profile.role == 'DRIVER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-          <a href="{% url 'driver_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-truck" aria-hidden="true"></i></span><span class="nav-label">Drivers</span></a>
+          <a href="{% url 'driver_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-truck fa-fw" aria-hidden="true"></i></span><span class="nav-label">Drivers</span></a>
           {% endif %}
           {% if user.profile.role == 'ADMIN_STAFF' %}
-          <a href="{% url 'admin_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-gear" aria-hidden="true"></i></span><span class="nav-label">Admin Ops</span></a>
+          <a href="{% url 'admin_dashboard' %}"><span class="nav-icon"><i class="fa-solid fa-gear fa-fw" aria-hidden="true"></i></span><span class="nav-label">Admin Ops</span></a>
           {% endif %}
         {% endif %}
       </nav>
