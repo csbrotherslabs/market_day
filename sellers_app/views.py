@@ -12,7 +12,7 @@ def _get_seller_profile(user):
 
 
 @login_required
-@role_required(['SELLER'])
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def dashboard(request):
     seller_profile = _get_seller_profile(request.user)
     products = Product.objects.filter(seller=seller_profile)[:6]
@@ -21,7 +21,7 @@ def dashboard(request):
 
 
 @login_required
-@role_required(['SELLER'])
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def store_setup(request):
     seller_profile = _get_seller_profile(request.user)
     markets = Market.objects.filter(active=True)
@@ -37,7 +37,7 @@ def store_setup(request):
 
 
 @login_required
-@role_required(['SELLER'])
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def product_list(request):
     seller_profile = _get_seller_profile(request.user)
     products = Product.objects.filter(seller=seller_profile)
@@ -45,7 +45,7 @@ def product_list(request):
 
 
 @login_required
-@role_required(['SELLER'])
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def add_product(request):
     seller_profile = _get_seller_profile(request.user)
     categories = Category.objects.filter(active=True)
@@ -78,7 +78,7 @@ def add_product(request):
 
 
 @login_required
-@role_required(['SELLER'])
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def edit_product(request, product_id):
     seller_profile = _get_seller_profile(request.user)
     product = get_object_or_404(Product, id=product_id, seller=seller_profile)
@@ -100,7 +100,7 @@ def edit_product(request, product_id):
 
 
 @login_required
-@role_required(['SELLER'])
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def order_list(request):
     seller_profile = _get_seller_profile(request.user)
     orders = Order.objects.filter(items__seller=seller_profile).distinct()
@@ -108,7 +108,7 @@ def order_list(request):
 
 
 @login_required
-@role_required(['SELLER'])
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def order_detail(request, order_id):
     seller_profile = _get_seller_profile(request.user)
     order = get_object_or_404(Order.objects.filter(items__seller=seller_profile).distinct(), id=order_id)
