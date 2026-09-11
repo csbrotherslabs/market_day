@@ -67,6 +67,10 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
     const templateKey = encodeURIComponent(match[1]);
     const actions = document.createElement('div');
     actions.className = 'template-card-actions';
+    actions.style.display = 'grid';
+    actions.style.gridTemplateColumns = '1fr 1fr';
+    actions.style.gap = '8px';
+    actions.style.marginTop = 'auto';
 
     const previewLink = document.createElement('a');
     previewLink.className = 'btn btn-outline btn-sm template-preview-action';
@@ -76,8 +80,19 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
     previewLink.textContent = 'Preview Template';
 
     selectLink.classList.add('btn-sm');
+    previewLink.style.width = '100%';
+    previewLink.style.marginTop = '0';
+    selectLink.style.width = '100%';
+    selectLink.style.marginTop = '0';
+
     actions.appendChild(previewLink);
     actions.appendChild(selectLink);
     card.appendChild(actions);
+
+    const syncActionLayout = () => {
+      actions.style.gridTemplateColumns = window.innerWidth <= 720 ? '1fr' : '1fr 1fr';
+    };
+    syncActionLayout();
+    window.addEventListener('resize', syncActionLayout);
   });
 }
