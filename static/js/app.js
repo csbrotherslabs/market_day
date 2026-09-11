@@ -57,6 +57,43 @@ if (profileMenuToggle && profileMenu) {
 
 // Add a non-destructive full-template preview action to the store creation cards.
 if (window.location.pathname.endsWith('/sellers/stores/add/')) {
+  if (!document.getElementById('templateCardActionStyles')) {
+    const style = document.createElement('style');
+    style.id = 'templateCardActionStyles';
+    style.textContent = `
+      .template-card { height: 100%; }
+      .template-card-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+        margin-top: auto;
+        padding-top: 4px;
+        align-items: stretch;
+      }
+      .template-card-actions .btn {
+        width: 100% !important;
+        min-width: 0;
+        min-height: 36px;
+        height: 36px;
+        margin: 0 !important;
+        padding: 7px 9px;
+        font-size: 11.5px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      @media (max-width: 720px) {
+        .template-card-actions {
+          grid-template-columns: 1fr;
+        }
+        .template-card-actions .btn {
+          height: 38px;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   document.querySelectorAll('.template-card').forEach((card) => {
     const selectLink = card.querySelector('a[href^="?template="]');
     if (!selectLink || card.querySelector('.template-preview-action')) return;
@@ -67,10 +104,6 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
     const templateKey = encodeURIComponent(match[1]);
     const actions = document.createElement('div');
     actions.className = 'template-card-actions';
-    actions.style.display = 'grid';
-    actions.style.gridTemplateColumns = '1fr 1fr';
-    actions.style.gap = '8px';
-    actions.style.marginTop = 'auto';
 
     const previewLink = document.createElement('a');
     previewLink.className = 'btn btn-outline btn-sm template-preview-action';
@@ -80,19 +113,8 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
     previewLink.textContent = 'Preview Template';
 
     selectLink.classList.add('btn-sm');
-    previewLink.style.width = '100%';
-    previewLink.style.marginTop = '0';
-    selectLink.style.width = '100%';
-    selectLink.style.marginTop = '0';
-
     actions.appendChild(previewLink);
     actions.appendChild(selectLink);
     card.appendChild(actions);
-
-    const syncActionLayout = () => {
-      actions.style.gridTemplateColumns = window.innerWidth <= 720 ? '1fr' : '1fr 1fr';
-    };
-    syncActionLayout();
-    window.addEventListener('resize', syncActionLayout);
   });
 }
