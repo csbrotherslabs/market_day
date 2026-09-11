@@ -2,27 +2,119 @@
 {% block title %}Seller Dashboard{% endblock %}
 {% block content %}
 <style>
-  .store-card { display:block; width:100%; }
-  .store-card-body { width:100%; min-width:0; }
-  .store-card-topbar { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:12px; margin-bottom:14px; }
-  .store-card-actions { display:flex; align-items:center; gap:7px; flex-wrap:wrap; min-width:0; }
-  .store-card-statuses { display:flex; align-items:center; justify-content:flex-end; gap:7px; flex-wrap:wrap; }
-  .store-card-statuses .pill { padding:6px 10px; font-size:11px; line-height:1; white-space:nowrap; }
-  .store-card-content h4 { margin:0 0 8px; }
-  .store-card-content p { margin:5px 0; }
-
-  @media (max-width:640px) {
-    .store-card-topbar { grid-template-columns:minmax(0,1fr) auto; gap:8px; margin-bottom:12px; }
-    .store-card-actions { gap:5px; }
-    .store-card-statuses { gap:5px; max-width:145px; }
-    .store-card-statuses .pill { padding:5px 8px; font-size:10px; }
-    .store-card-actions .btn-xs { min-height:28px; padding:5px 8px; font-size:10.5px; }
+  .store-grid {
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:18px;
+  }
+  .store-card {
+    overflow:hidden;
+    border:1px solid #e4e9e5;
+    border-radius:20px;
+    background:#fff;
+    box-shadow:0 10px 30px rgba(20,45,30,.06);
+  }
+  .store-card-media {
+    position:relative;
+    aspect-ratio:16/7;
+    background:linear-gradient(135deg,#eef5ef,#f8faf8);
+    overflow:hidden;
+  }
+  .store-card-media img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .store-card-media-placeholder {
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#7c8c82;
+    font-size:12px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+  }
+  .store-card-body {
+    padding:18px;
+  }
+  .store-card-title {
+    margin:0 0 7px;
+    font-size:18px;
+    line-height:1.25;
+    color:#10203a;
+  }
+  .store-card-location,
+  .store-card-products {
+    margin:0;
+    color:#667085;
+    font-size:13px;
+    line-height:1.5;
+  }
+  .store-card-products { margin-top:6px; }
+  .store-card-meta {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:16px;
+  }
+  .store-card-template {
+    display:inline-flex;
+    align-items:center;
+    min-height:28px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#eef4ff;
+    color:#344054;
+    font-size:11px;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .store-card-status {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    color:#475467;
+    font-size:11px;
+    white-space:nowrap;
+  }
+  .store-card-status::before {
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#98a2b3;
+    box-shadow:0 0 0 3px rgba(152,162,179,.14);
+  }
+  .store-card-status.is-active::before {
+    background:#16a34a;
+    box-shadow:0 0 0 3px rgba(22,163,74,.14);
+  }
+  .store-card-actions {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:16px;
+  }
+  .store-card-actions .btn {
+    width:100%;
+    justify-content:center;
   }
 
+  @media (max-width:1100px) {
+    .store-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width:700px) {
+    .store-grid { grid-template-columns:1fr; }
+    .store-card-body { padding:16px; }
+    .store-card-title { font-size:17px; }
+  }
   @media (max-width:420px) {
-    .store-card-topbar { grid-template-columns:1fr; }
-    .store-card-statuses { grid-row:1; justify-self:end; max-width:none; }
-    .store-card-actions { grid-row:2; }
+    .store-card-actions { grid-template-columns:1fr; }
+    .store-card-meta { align-items:flex-start; }
   }
 </style>
 <section class="two-col-grid">
@@ -31,35 +123,44 @@
       <h3>Your stores</h3>
       <a class="btn btn-primary btn-sm" href="{% url 'seller_store_setup' %}">Add store</a>
     </div>
-    <div class="stack-list">
+
+    <div class="store-grid">
       {% for store in stores %}
-        <div class="list-card block-card store-card">
+        <article class="store-card">
+          <div class="store-card-media">
+            {% if store.store_image %}
+              <img src="{{ store.store_image.url }}" alt="{{ store.name }}">
+            {% else %}
+              <div class="store-card-media-placeholder">Store image</div>
+            {% endif %}
+          </div>
+
           <div class="store-card-body">
-            <div class="store-card-topbar">
-              <div class="store-card-actions">
-                <a class="btn btn-outline btn-xs" href="{% url 'seller_store_change_design' store.id %}">Change Design</a>
-                <a class="btn btn-ghost btn-xs" href="{% url 'seller_store_edit' store.id %}">Edit</a>
-              </div>
-              <div class="store-card-statuses">
-                <span class="pill">{{ store.get_template_key_display }}</span>
-                {% if store.active %}<span class="pill">Active</span>{% else %}<span class="pill">Inactive</span>{% endif %}
-              </div>
+            <h4 class="store-card-title">{{ store.name }}</h4>
+            <p class="store-card-location">
+              {% if store.market %}{{ store.market.name }}{% else %}No market selected{% endif %}
+              {% if store.stall_number %} · Stall {{ store.stall_number }}{% endif %}
+            </p>
+            <p class="store-card-products">{{ store.products.count }} product{{ store.products.count|pluralize }}</p>
+
+            <div class="store-card-meta">
+              <span class="store-card-template">{{ store.get_template_key_display }}</span>
+              <span class="store-card-status{% if store.active %} is-active{% endif %}">
+                {% if store.active %}Active{% else %}Inactive{% endif %}
+              </span>
             </div>
 
-            <div class="store-card-content">
-              <h4>{{ store.name }}</h4>
-              <p>
-                {% if store.market %}{{ store.market.name }}{% else %}No market selected{% endif %}
-                {% if store.stall_number %} · Stall {{ store.stall_number }}{% endif %}
-              </p>
-              <p>{{ store.products.count }} product{{ store.products.count|pluralize }}</p>
+            <div class="store-card-actions">
+              <a class="btn btn-outline btn-sm" href="{% url 'seller_store_change_design' store.id %}">Change Design</a>
+              <a class="btn btn-ghost btn-sm" href="{% url 'seller_store_edit' store.id %}">Edit</a>
             </div>
           </div>
-        </div>
+        </article>
       {% empty %}
         <div class="empty-state">You have not created a store yet.</div>
       {% endfor %}
     </div>
+
     <div class="hero-actions compact-actions" style="margin-top:16px;">
       <a class="btn btn-secondary btn-sm" href="{% url 'add_product' %}">Add product</a>
       <a class="btn btn-secondary btn-sm" href="{% url 'seller_products' %}">View products</a>
