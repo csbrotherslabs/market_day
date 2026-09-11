@@ -7,11 +7,23 @@
     <h2>Buy from local sellers, verify quality, and dispatch faster with a futuristic operations stack.</h2>
     <p>MarketFlow Africa is designed for buyers, sellers, QA analysts, drivers, and admins in one clean workflow.</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="{% url 'register' %}">Create account</a>
-      {% if user.is_authenticated and user.profile.role == 'BUYER' %}
-      <a class="btn btn-secondary" href="{% url 'buyer_dashboard' %}">Open dashboard</a>
+      {% if user.is_authenticated %}
+        {% if user.profile.role == 'BUYER' %}
+          <a class="btn btn-primary" href="{% url 'buyer_dashboard' %}">Open dashboard</a>
+        {% elif user.profile.role == 'SELLER' %}
+          <a class="btn btn-primary" href="{% url 'seller_dashboard' %}">Open dashboard</a>
+        {% elif user.profile.role == 'QA' %}
+          <a class="btn btn-primary" href="{% url 'qa_dashboard' %}">Open dashboard</a>
+        {% elif user.profile.role == 'DRIVER' %}
+          <a class="btn btn-primary" href="{% url 'driver_dashboard' %}">Open dashboard</a>
+        {% elif user.profile.role == 'ADMIN_STAFF' %}
+          <a class="btn btn-primary" href="{% url 'admin_dashboard' %}">Open dashboard</a>
+        {% elif user.profile.role == 'SUPER_USER' %}
+          <a class="btn btn-primary" href="{% url 'buyer_dashboard' %}">Open dashboard</a>
+        {% endif %}
       {% else %}
-      <a class="btn btn-secondary" href="{% url 'login' %}">Sign in</a>
+        <a class="btn btn-primary" href="{% url 'register' %}">Create account</a>
+        <a class="btn btn-secondary" href="{% url 'login' %}">Sign in</a>
       {% endif %}
     </div>
   </div>
