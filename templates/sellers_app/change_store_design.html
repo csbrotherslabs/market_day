@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Change Store Design{% endblock %}
+{% block content %}
+<style>
+.design-switcher{max-width:1450px;margin:0 auto}.switcher-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.switcher-head h2{margin:6px 0;font-size:34px}.switcher-head p{margin:0;color:var(--muted)}.current-design{padding:14px 16px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.03);min-width:250px}.current-design span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}.design-grid{display:grid;grid-template-columns:repeat(3,minmax(240px,1fr));gap:16px}.design-card{background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column}.design-card.current{border-color:var(--success)}.design-card.selected{outline:2px solid var(--accent)}.design-preview{height:175px;border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-bottom:14px;background:#edf5e9}.design-preview .nav{height:28px;background:white;color:#17251b;padding:0 10px;display:flex;align-items:center;gap:10px;font-size:8px}.design-preview .hero{height:102px;padding:18px;font-size:19px;font-weight:900;line-height:1.05;background:linear-gradient(110deg,#0d542b,#5c9850);color:white}.design-card:nth-child(2) .design-preview{background:#15100a}.design-card:nth-child(2) .design-preview .nav{background:#130e09;color:#f1d29a}.design-card:nth-child(2) .design-preview .hero{background:linear-gradient(110deg,#1b120b,#784018);color:#f6d9a0}.design-card:nth-child(3) .design-preview .hero{background:linear-gradient(110deg,#eff5dd,#aaca84);color:#18331d}.design-card:nth-child(4) .design-preview .hero{background:linear-gradient(110deg,#14281b,#4d8057)}.design-card:nth-child(5) .design-preview{background:#0f0d09}.design-card:nth-child(5) .design-preview .nav{background:#141008;color:#f3d58c}.design-card:nth-child(5) .design-preview .hero{background:linear-gradient(110deg,#21170b,#5a4720);color:#f2d58c}.design-card:nth-child(6) .design-preview .hero{background:linear-gradient(110deg,#fff0dc,#ecbb75);color:#2b2118}.preview-row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:8px}.preview-row span{height:28px;border-radius:6px;background:#b9d39e}.design-title{display:flex;justify-content:space-between;gap:10px;align-items:center}.design-title h3{margin:0;font-size:18px}.design-card p{color:var(--muted);font-size:13px;line-height:1.55}.feature-list{padding:0;margin:0 0 15px;list-style:none;display:grid;gap:6px;font-size:12px}.feature-list li:before{content:'✓';color:var(--success);font-weight:900;margin-right:7px}.badge-soft{font-size:11px;border-radius:999px;padding:5px 9px;background:rgba(34,197,94,.12);color:var(--success)}.design-card .btn{margin-top:auto}.switch-form{max-width:980px;margin:0 auto}.requirement-note{padding:15px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.03);margin-bottom:18px}.requirement-note strong{display:block;margin-bottom:5px}.requirement-note p{margin:0;color:var(--muted);font-size:13px}.missing-list{display:grid;gap:8px;margin:14px 0}.missing-item{padding:10px 12px;border-radius:12px;background:rgba(255,91,127,.08);border:1px solid rgba(255,91,127,.18);font-size:13px}.field-error{font-size:12px;color:var(--danger)}.actions{display:flex;justify-content:space-between;gap:12px;margin-top:20px}.preserved-note{margin-top:15px;padding:13px;border-radius:14px;background:rgba(34,197,94,.08);font-size:13px;color:var(--muted)}@media(max-width:1050px){.design-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.design-grid{grid-template-columns:1fr}.switcher-head{display:block}.current-design{margin-top:15px}.switcher-head h2{font-size:28px}}
+</style>
+<div class="design-switcher">
+  <a class="text-link" href="{% url 'seller_dashboard' %}">← Back to Dashboard</a>
+  <div class="switcher-head">
+    <div>
+      <h2>Change Design</h2>
+      <p>Choose a new look for {{ store.name }}. Your current storefront stays live until the new design is ready.</p>
+    </div>
+    <div class="current-design"><span>Current design</span><strong>{{ current_template.name }}</strong></div>
+  </div>
+
+  {% if not selected_template_key %}
+    <div class="design-grid">
+      {% for key, template in store_templates.items %}
+        <article class="design-card {% if key == current_template_key %}current{% endif %}">
+          <div class="design-preview">
+            <div class="nav"><strong>Market Day</strong><span>Home</span><span>Shop</span><span>About</span></div>
+            <div class="hero">{% if key == 'fresh_simple' %}Farm Fresh<br>Goodness{% elif key == 'boutique' %}Authentic<br>African Flavors{% elif key == 'story_impact' %}Good Food.<br>Healthy Living.{% elif key == 'modern_market' %}Quality Produce.<br>Local Prices.{% elif key == 'premium_showcase' %}Excellence<br>in Every Harvest{% else %}Good Food.<br>Good People.{% endif %}</div>
+            <div class="preview-row"><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="design-title"><h3>{{ template.name }}</h3><span class="badge-soft">{% if key == current_template_key %}Current{% else %}{{ template.badge }}{% endif %}</span></div>
+          <p>{{ template.description }}</p>
+          <ul class="feature-list">{% for feature in template.features %}<li>{{ feature }}</li>{% endfor %}</ul>
+          {% if key == current_template_key %}
+            <button class="btn btn-secondary" type="button" disabled>Current Design</button>
+          {% else %}
+            <a class="btn btn-primary" href="?template={{ key }}">Choose This Design</a>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card switch-form">
+      <div class="section-head"><div><span class="pill">{{ selected_template.complexity }}</span><h3 style="margin:10px 0 0;">Switch to {{ selected_template.name }}</h3></div><a class="text-link" href="{% url 'seller_store_change_design' store.id %}">Choose another design</a></div>
+      <div class="requirement-note"><strong>Before publishing</strong><p>We reuse everything your store already has. Only information required by the new design that is missing must be added.</p></div>
+      {% if missing_fields %}
+        <div class="missing-list">
+          {% for field in missing_fields %}<div class="missing-item">Missing required content: {{ field_labels|get_item:field|default:field }}</div>{% endfor %}
+        </div>
+      {% endif %}
+      <form method="POST" enctype="multipart/form-data" class="form-grid two-col-form">
+        {% csrf_token %}
+        <input type="hidden" name="template_key" value="{{ selected_template_key }}">
+
+        {% for field in selected_template.required_fields %}
+          <label class="{% if field == 'about_story' or field == 'impact_statement' or field == 'gallery_intro' %}full-span{% endif %}">
+            <span>{{ field_labels|get_item:field }} <b style="color:var(--danger)">*</b></span>
+            {% if field == 'about_story' or field == 'impact_statement' or field == 'gallery_intro' %}
+              <textarea name="{{ field }}" rows="4" required>{{ form_values|get_item:field|default:'' }}</textarea>
+            {% else %}
+              <input type="text" name="{{ field }}" value="{{ form_values|get_item:field|default:'' }}" required>
+            {% endif %}
+            {% if errors|get_item:field %}<small class="field-error">{{ errors|get_item:field }}</small>{% endif %}
+          </label>
+        {% endfor %}
+
+        {% if not store.store_image %}
+          <label><span>Hero / banner image <b style="color:var(--danger)">*</b></span><input type="file" name="store_image" accept="image/*" required>{% if errors.store_image %}<small class="field-error">{{ errors.store_image }}</small>{% endif %}</label>
+        {% else %}
+          <label><span>Replace hero / banner image</span><input type="file" name="store_image" accept="image/*"><small class="muted">Optional. Your current banner is preserved.</small></label>
+        {% endif %}
+
+        {% if not store.logo_image %}
+          <label><span>Store logo <b style="color:var(--danger)">*</b></span><input type="file" name="logo_image" accept="image/*" required>{% if errors.logo_image %}<small class="field-error">{{ errors.logo_image }}</small>{% endif %}</label>
+        {% else %}
+          <label><span>Replace store logo</span><input type="file" name="logo_image" accept="image/*"><small class="muted">Optional. Your current logo is preserved.</small></label>
+        {% endif %}
+
+        <div class="full-span preserved-note">Products, orders, reviews, ratings, market assignment, store URL, and content from other templates are preserved. Switching designs changes presentation only.</div>
+        <div class="full-span actions"><a class="btn btn-secondary" href="{% url 'seller_store_change_design' store.id %}">Cancel</a><button class="btn btn-primary" type="submit">Review & Publish Design</button></div>
+      </form>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
