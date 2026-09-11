@@ -1,9 +1,10 @@
 from decimal import Decimal
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from .models import Market, Product
@@ -58,17 +59,75 @@ def register_view(request):
     markets = Market.objects.filter(active=True)
     errors = {}
     if request.method == 'POST':
-        first_name = request.POST.get('first_name', '').strip(); last_name = request.POST.get('last_name', '').strip(); username = request.POST.get('username', '').strip(); email = request.POST.get('email', '').strip().lower(); password = request.POST.get('password', ''); confirm_password = request.POST.get('confirm_password', ''); role = request.POST.get('role', 'BUYER'); phone = request.POST.get('phone', '').strip()
-        if not first_name: errors['first_name'] = 'First name is required.'
-        if not username: errors['username'] = 'Username is required.'
-        if User.objects.filter(username=username).exists(): errors['username'] = 'Username already exists.'
-        if email and User.objects.filter(email__iexact=email).exists(): errors['email'] = 'An account with this email already exists.'
-        if password != confirm_password: errors['password'] = 'Passwords do not match.'
-        if len(password) < 6: errors['password'] = 'Password must be at least 6 characters.'
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+        role = request.POST.get('role', 'BUYER')
+        phone = request.POST.get('phone', '').strip()
+
+        if not first_name:
+            errors['first_name'] = 'First name is required.'
+        if not username:
+            errors['username'] = 'Username is required.'
+        if User.objects.filter(username=username).exists():
+            errors['username'] = 'Username already exists.'
+        if not email:
+            errors['email'] = 'Email is required.'
+        elif User.objects.filter(email__iexact=email).exists():
+            errors['email'] = 'An account with this email already exists.'
+        if password != confirm_password:
+            errors['password'] = 'Passwords do not match.'
+        if len(password) < 6:
+            errors['password'] = 'Password must be at least 6 characters.'
+
         if not errors:
-            user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
-            user.profile.role = role; user.profile.phone = phone; user.profile.save(); login(request, user); messages.success(request, 'Account created successfully.'); return redirect('home')
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+            )
+            user.profile.role = role
+            user.profile.phone = phone
+            user.profile.save()
+            login(request, user)
+            messages.success(request, 'Account created successfully.')
+            return redirect('home')
     return render(request, 'core_app/register.html', {'markets': markets, 'errors': errors})
+
+
+def temporary_password_reset(request):
+    # Development-only shortcut. Production must use an authenticated reset method
+    # such as Django's signed email token flow.
+    if not settings.DEBUG:
+        raise Http404
+
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip().lower()
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        if not email:
+            messages.error(request, 'Email is required.')
+        elif len(new_password) < 6:
+            messages.error(request, 'Password must be at least 6 characters.')
+        elif new_password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+        else:
+            user = User.objects.filter(email__iexact=email).first()
+            if not user:
+                messages.error(request, 'No account was found with that email address.')
+            else:
+                user.set_password(new_password)
+                user.save(update_fields=['password'])
+                messages.success(request, 'Password reset successfully. You can now sign in.')
+                return redirect('login')
+
+    return render(request, 'core_app/password_reset_form.html')
 
 
 @login_required
