@@ -74,11 +74,11 @@ def store_template_preview(request, template_key):
     ]
     categories = ['Fresh Vegetables', 'Fresh Fruits', 'Herbs & Spices', 'Grains & Beans']
 
-    template_name = (
-        'sellers_app/store_template_preview_boutique.html'
-        if template_key == 'boutique'
-        else 'sellers_app/store_template_preview.html'
-    )
+    dedicated_templates = {
+        'boutique': 'sellers_app/store_template_preview_boutique.html',
+        'story_impact': 'sellers_app/store_template_preview_story_impact.html',
+    }
+    template_name = dedicated_templates.get(template_key, 'sellers_app/store_template_preview.html')
 
     return render(request, template_name, {
         'template_key': template_key,
