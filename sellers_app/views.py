@@ -91,6 +91,15 @@ def _store_form_context(store=None, selected_template='', markets=None, errors=N
     }
 
 
+def _merged_store_values(store, posted=None):
+    values = dict(store.template_data or {})
+    if posted is not None:
+        for field in STORE_FIELD_LABELS:
+            if field in posted:
+                values[field] = posted.get(field, '').strip()
+    return values
+
+
 @login_required
 @role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def dashboard(request):
@@ -103,6 +112,7 @@ def dashboard(request):
         'stores': stores,
         'products': products,
         'orders': orders,
+        'store_templates': STORE_TEMPLATES,
     })
 
 
@@ -123,7 +133,6 @@ def store_setup(request, store_id=None):
     if store and not selected_template:
         selected_template = store.template_key or 'fresh_simple'
 
-    # New stores begin on the template-selection screen.
     if store is None and request.method == 'GET' and selected_template not in STORE_TEMPLATES:
         return render(request, 'sellers_app/store_setup.html', _store_form_context(
             store=store,
@@ -219,6 +228,84 @@ def store_setup(request, store_id=None):
         markets=markets,
         form_values=form_values,
     ))
+
+
+@login_required
+@role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
+def change_store_design(request, store_id):
+    seller_profile = _get_seller_profile(request.user)
+    store = get_object_or_404(SellerStore, id=store_id, seller=seller_profile)
+    current_key = store.template_key or 'fresh_simple'
+
+    selected_key = (
+        request.POST.get('template_key', '').strip()
+        if request.method == 'POST'
+        else request.GET.get('template', '').strip()
+    )
+
+    if request.method == 'GET' and not selected_key:
+        return render(request, 'sellers_app/change_store_design.html', {
+            'store': store,
+            'store_templates': STORE_TEMPLATES,
+            'current_template_key': current_key,
+            'current_template': STORE_TEMPLATES.get(current_key, STORE_TEMPLATES['fresh_simple']),
+            'selected_template_key': '',
+            'selected_template': None,
+            'field_labels': STORE_FIELD_LABELS,
+            'form_values': store.template_data or {},
+            'errors': {},
+        })
+
+    if selected_key not in STORE_TEMPLATES:
+        messages.error(request, 'Select a valid store design.')
+        return redirect('seller_store_change_design', store_id=store.id)
+
+    selected_template = STORE_TEMPLATES[selected_key]
+    form_values = _merged_store_values(store, request.POST if request.method == 'POST' else None)
+    missing_fields = [f for f in selected_template['required_fields'] if not form_values.get(f)]
+    errors = {}
+
+    if request.method == 'POST':
+        for field in selected_template['required_fields']:
+            if not form_values.get(field):
+                errors[field] = f'{STORE_FIELD_LABELS[field]} is required for this design.'
+
+        if not store.store_image and not request.FILES.get('store_image'):
+            errors['store_image'] = 'A hero/banner image is required for this design.'
+        if not store.logo_image and not request.FILES.get('logo_image'):
+            errors['logo_image'] = 'A store logo is required for this design.'
+
+        if errors:
+            messages.error(request, 'Complete the missing requirements before publishing the new design.')
+            missing_fields = [f for f in selected_template['required_fields'] if errors.get(f)]
+        else:
+            existing_data = dict(store.template_data or {})
+            for field in STORE_FIELD_LABELS:
+                value = form_values.get(field, '')
+                if value:
+                    existing_data[field] = value
+            store.template_data = existing_data
+            store.template_key = selected_key
+            if request.FILES.get('store_image'):
+                store.store_image = request.FILES['store_image']
+            if request.FILES.get('logo_image'):
+                store.logo_image = request.FILES['logo_image']
+            store.save(update_fields=['template_data', 'template_key', 'store_image', 'logo_image'])
+            messages.success(request, f'{store.name} is now using the {selected_template["name"]} design.')
+            return redirect('seller_dashboard')
+
+    return render(request, 'sellers_app/change_store_design.html', {
+        'store': store,
+        'store_templates': STORE_TEMPLATES,
+        'current_template_key': current_key,
+        'current_template': STORE_TEMPLATES.get(current_key, STORE_TEMPLATES['fresh_simple']),
+        'selected_template_key': selected_key,
+        'selected_template': selected_template,
+        'field_labels': STORE_FIELD_LABELS,
+        'form_values': form_values,
+        'missing_fields': missing_fields,
+        'errors': errors,
+    })
 
 
 @login_required
