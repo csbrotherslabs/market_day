@@ -23,6 +23,7 @@
           </div>
           <div class="right-actions">
             {% if store.active %}<span class="pill">Active</span>{% else %}<span class="pill">Inactive</span>{% endif %}
+            <a class="text-link" href="{% url 'seller_store_change_design' store.id %}">Change Design</a>
             <a class="text-link" href="{% url 'seller_store_edit' store.id %}">Edit</a>
           </div>
         </div>
