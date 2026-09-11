@@ -2,32 +2,19 @@
 {% block title %}MarketFlow Africa{% endblock %}
 {% block content %}
 <section class="hero-grid">
+  {% if not user.is_authenticated %}
   <div class="card hero-card">
     <div class="eyebrow">Next-generation market commerce</div>
     <h2>Buy from local sellers, verify quality, and dispatch faster with a futuristic operations stack.</h2>
     <p>MarketFlow Africa is designed for buyers, sellers, QA analysts, drivers, and admins in one clean workflow.</p>
     <div class="hero-actions">
-      {% if user.is_authenticated %}
-        {% if user.profile.role == 'BUYER' %}
-          <a class="btn btn-primary" href="{% url 'buyer_dashboard' %}">Open dashboard</a>
-        {% elif user.profile.role == 'SELLER' %}
-          <a class="btn btn-primary" href="{% url 'seller_dashboard' %}">Open dashboard</a>
-        {% elif user.profile.role == 'QA' %}
-          <a class="btn btn-primary" href="{% url 'qa_dashboard' %}">Open dashboard</a>
-        {% elif user.profile.role == 'DRIVER' %}
-          <a class="btn btn-primary" href="{% url 'driver_dashboard' %}">Open dashboard</a>
-        {% elif user.profile.role == 'ADMIN_STAFF' %}
-          <a class="btn btn-primary" href="{% url 'admin_dashboard' %}">Open dashboard</a>
-        {% elif user.profile.role == 'SUPER_USER' %}
-          <a class="btn btn-primary" href="{% url 'buyer_dashboard' %}">Open dashboard</a>
-        {% endif %}
-      {% else %}
-        <a class="btn btn-primary" href="{% url 'register' %}">Create account</a>
-        <a class="btn btn-secondary" href="{% url 'login' %}">Sign in</a>
-      {% endif %}
+      <a class="btn btn-primary" href="{% url 'register' %}">Create account</a>
+      <a class="btn btn-secondary" href="{% url 'login' %}">Sign in</a>
     </div>
   </div>
-  <div class="card">
+  {% endif %}
+
+  <div class="card"{% if user.is_authenticated %} style="grid-column:1 / -1;"{% endif %}>
     <div class="section-head"><h3>Platform overview</h3><span class="pill">Live</span></div>
     <div class="stats-grid">
       <div class="metric"><div class="label">Markets</div><div class="value">{{ stats.markets }}</div><div class="delta">Growing local reach</div></div>
