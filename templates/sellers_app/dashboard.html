@@ -11,7 +11,10 @@
       {% for store in stores %}
         <div class="list-card block-card">
           <div>
-            <h4>{{ store.name }}</h4>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <h4>{{ store.name }}</h4>
+              <span class="pill">{{ store.get_template_key_display }}</span>
+            </div>
             <p>
               {% if store.market %}{{ store.market.name }}{% else %}No market selected{% endif %}
               {% if store.stall_number %} · Stall {{ store.stall_number }}{% endif %}
