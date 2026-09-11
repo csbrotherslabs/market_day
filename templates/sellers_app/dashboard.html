@@ -1,6 +1,30 @@
 {% extends 'base.html' %}
 {% block title %}Seller Dashboard{% endblock %}
 {% block content %}
+<style>
+  .store-card { display:block; width:100%; }
+  .store-card-body { width:100%; min-width:0; }
+  .store-card-topbar { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:12px; margin-bottom:14px; }
+  .store-card-actions { display:flex; align-items:center; gap:7px; flex-wrap:wrap; min-width:0; }
+  .store-card-statuses { display:flex; align-items:center; justify-content:flex-end; gap:7px; flex-wrap:wrap; }
+  .store-card-statuses .pill { padding:6px 10px; font-size:11px; line-height:1; white-space:nowrap; }
+  .store-card-content h4 { margin:0 0 8px; }
+  .store-card-content p { margin:5px 0; }
+
+  @media (max-width:640px) {
+    .store-card-topbar { grid-template-columns:minmax(0,1fr) auto; gap:8px; margin-bottom:12px; }
+    .store-card-actions { gap:5px; }
+    .store-card-statuses { gap:5px; max-width:145px; }
+    .store-card-statuses .pill { padding:5px 8px; font-size:10px; }
+    .store-card-actions .btn-xs { min-height:28px; padding:5px 8px; font-size:10.5px; }
+  }
+
+  @media (max-width:420px) {
+    .store-card-topbar { grid-template-columns:1fr; }
+    .store-card-statuses { grid-row:1; justify-self:end; max-width:none; }
+    .store-card-actions { grid-row:2; }
+  }
+</style>
 <section class="two-col-grid">
   <div class="card">
     <div class="section-head">
