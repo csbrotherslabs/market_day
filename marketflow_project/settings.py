@@ -80,3 +80,12 @@ AUTHENTICATION_BACKENDS = [
     'core_app.auth_backends.UsernameOrEmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# Development email backend. Password-reset emails are printed to the terminal
+# while running the development server. Replace with a production email backend
+# before deployment.
+EMAIL_BACKEND = os.getenv(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend',
+)
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@marketflow.africa')
