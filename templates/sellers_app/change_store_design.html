@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load store_extras %}
 {% block title %}Change Store Design{% endblock %}
 {% block content %}
 <style>
@@ -72,7 +73,7 @@
         {% endif %}
 
         <div class="full-span preserved-note">Products, orders, reviews, ratings, market assignment, store URL, and content from other templates are preserved. Switching designs changes presentation only.</div>
-        <div class="full-span actions"><a class="btn btn-secondary" href="{% url 'seller_store_change_design' store.id %}">Cancel</a><button class="btn btn-primary" type="submit">Review & Publish Design</button></div>
+        <div class="full-span actions"><a class="btn btn-secondary" href="{% url 'seller_store_change_design' store.id %}">Cancel</a><button class="btn btn-primary" type="submit">Publish New Design</button></div>
       </form>
     </div>
   {% endif %}
