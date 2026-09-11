@@ -1,9 +1,9 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from core_app.decorators import role_required
-from core_app.models import Category, Market, Order, Product, SellerProfile
+from core_app.models import Category, Market, Order, Product, SellerProfile, SellerStore
 
 
 def _get_seller_profile(user):
@@ -15,32 +15,60 @@ def _get_seller_profile(user):
 @role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def dashboard(request):
     seller_profile = _get_seller_profile(request.user)
-    products = Product.objects.filter(seller=seller_profile)[:6]
+    stores = SellerStore.objects.filter(seller=seller_profile).select_related('market').order_by('name')
+    products = Product.objects.filter(seller=seller_profile).select_related('store')[:6]
     orders = Order.objects.filter(items__seller=seller_profile).distinct()[:8]
-    return render(request, 'sellers_app/dashboard.html', {'seller_profile': seller_profile, 'products': products, 'orders': orders})
+    return render(request, 'sellers_app/dashboard.html', {
+        'seller_profile': seller_profile,
+        'stores': stores,
+        'products': products,
+        'orders': orders,
+    })
 
 
 @login_required
 @role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
-def store_setup(request):
+def store_setup(request, store_id=None):
     seller_profile = _get_seller_profile(request.user)
+    store = None
+    if store_id is not None:
+        store = get_object_or_404(SellerStore, id=store_id, seller=seller_profile)
     markets = Market.objects.filter(active=True)
+
     if request.method == 'POST':
-        seller_profile.market_id = request.POST.get('market') or None
-        seller_profile.stall_name = request.POST.get('stall_name', '').strip()
-        seller_profile.stall_number = request.POST.get('stall_number', '').strip()
-        seller_profile.description = request.POST.get('description', '').strip()
-        seller_profile.save()
-        messages.success(request, 'Store profile updated successfully.')
-        return redirect('seller_dashboard')
-    return render(request, 'sellers_app/store_setup.html', {'seller_profile': seller_profile, 'markets': markets})
+        market_id = request.POST.get('market') or None
+        name = request.POST.get('name', '').strip()
+        stall_number = request.POST.get('stall_number', '').strip()
+        description = request.POST.get('description', '').strip()
+
+        if not name:
+            messages.error(request, 'Store name is required.')
+        else:
+            if store is None:
+                store = SellerStore(seller=seller_profile)
+            store.market_id = market_id
+            store.name = name
+            store.stall_number = stall_number
+            store.description = description
+            store.active = request.POST.get('active') == 'on' if store.pk else True
+            if request.FILES.get('store_image'):
+                store.store_image = request.FILES['store_image']
+            store.save()
+            messages.success(request, 'Store saved successfully.')
+            return redirect('seller_dashboard')
+
+    return render(request, 'sellers_app/store_setup.html', {
+        'seller_profile': seller_profile,
+        'store': store,
+        'markets': markets,
+    })
 
 
 @login_required
 @role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def product_list(request):
     seller_profile = _get_seller_profile(request.user)
-    products = Product.objects.filter(seller=seller_profile)
+    products = Product.objects.filter(seller=seller_profile).select_related('store', 'category')
     return render(request, 'sellers_app/products.html', {'products': products})
 
 
@@ -49,6 +77,8 @@ def product_list(request):
 def add_product(request):
     seller_profile = _get_seller_profile(request.user)
     categories = Category.objects.filter(active=True)
+    stores = SellerStore.objects.filter(seller=seller_profile, active=True).select_related('market').order_by('name')
+
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         price = request.POST.get('price', '').strip()
@@ -56,25 +86,42 @@ def add_product(request):
         available_qty = request.POST.get('available_qty', '0').strip()
         description = request.POST.get('description', '').strip()
         category_id = request.POST.get('category') or None
-        if not name or not price:
+        store_id = request.POST.get('store') or None
+
+        store = SellerStore.objects.filter(id=store_id, seller=seller_profile, active=True).first() if store_id else None
+        if not stores.exists():
+            messages.error(request, 'Create a store before adding products.')
+        elif not store:
+            messages.error(request, 'Select one of your stores.')
+        elif not name or not price:
             messages.error(request, 'Name and price are required.')
         else:
-            product = Product(
-                seller=seller_profile,
-                category_id=category_id,
-                name=name,
-                description=description,
-                price=Decimal(price),
-                unit=unit,
-                available_qty=int(available_qty or 0),
-                active=True,
-            )
-            if request.FILES.get('image'):
-                product.image = request.FILES['image']
-            product.save()
-            messages.success(request, 'Product created successfully.')
-            return redirect('seller_products')
-    return render(request, 'sellers_app/add_product.html', {'categories': categories})
+            try:
+                parsed_price = Decimal(price)
+                parsed_qty = int(available_qty or 0)
+                if parsed_price < 0 or parsed_qty < 0:
+                    raise ValueError
+            except (InvalidOperation, ValueError):
+                messages.error(request, 'Enter a valid non-negative price and quantity.')
+            else:
+                product = Product(
+                    seller=seller_profile,
+                    store=store,
+                    category_id=category_id,
+                    name=name,
+                    description=description,
+                    price=parsed_price,
+                    unit=unit,
+                    available_qty=parsed_qty,
+                    active=True,
+                )
+                if request.FILES.get('image'):
+                    product.image = request.FILES['image']
+                product.save()
+                messages.success(request, f'Product added to {store.name}.')
+                return redirect('seller_products')
+
+    return render(request, 'sellers_app/add_product.html', {'categories': categories, 'stores': stores})
 
 
 @login_required
@@ -83,20 +130,41 @@ def edit_product(request, product_id):
     seller_profile = _get_seller_profile(request.user)
     product = get_object_or_404(Product, id=product_id, seller=seller_profile)
     categories = Category.objects.filter(active=True)
+    stores = SellerStore.objects.filter(seller=seller_profile, active=True).select_related('market').order_by('name')
+
     if request.method == 'POST':
-        product.name = request.POST.get('name', product.name).strip()
-        product.price = Decimal(request.POST.get('price', product.price))
-        product.unit = request.POST.get('unit', product.unit).strip()
-        product.available_qty = int(request.POST.get('available_qty', product.available_qty) or 0)
-        product.description = request.POST.get('description', product.description).strip()
-        product.category_id = request.POST.get('category') or None
-        product.active = request.POST.get('active') == 'on'
-        if request.FILES.get('image'):
-            product.image = request.FILES['image']
-        product.save()
-        messages.success(request, 'Product updated successfully.')
-        return redirect('seller_products')
-    return render(request, 'sellers_app/edit_product.html', {'product': product, 'categories': categories})
+        store_id = request.POST.get('store') or None
+        store = SellerStore.objects.filter(id=store_id, seller=seller_profile, active=True).first() if store_id else None
+        if not store:
+            messages.error(request, 'Select one of your stores.')
+        else:
+            try:
+                parsed_price = Decimal(request.POST.get('price', product.price))
+                parsed_qty = int(request.POST.get('available_qty', product.available_qty) or 0)
+                if parsed_price < 0 or parsed_qty < 0:
+                    raise ValueError
+            except (InvalidOperation, ValueError):
+                messages.error(request, 'Enter a valid non-negative price and quantity.')
+            else:
+                product.store = store
+                product.name = request.POST.get('name', product.name).strip()
+                product.price = parsed_price
+                product.unit = request.POST.get('unit', product.unit).strip()
+                product.available_qty = parsed_qty
+                product.description = request.POST.get('description', product.description).strip()
+                product.category_id = request.POST.get('category') or None
+                product.active = request.POST.get('active') == 'on'
+                if request.FILES.get('image'):
+                    product.image = request.FILES['image']
+                product.save()
+                messages.success(request, 'Product updated successfully.')
+                return redirect('seller_products')
+
+    return render(request, 'sellers_app/edit_product.html', {
+        'product': product,
+        'categories': categories,
+        'stores': stores,
+    })
 
 
 @login_required
