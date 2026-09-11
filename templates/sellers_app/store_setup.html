@@ -1,42 +1,151 @@
 {% extends 'base.html' %}
-{% block title %}{% if store %}Edit Store{% else %}Add Store{% endif %}{% endblock %}
+{% block title %}{% if store %}Edit Store{% else %}Create Your Store{% endif %}{% endblock %}
 {% block content %}
-<div class="card">
-  <div class="section-head">
-    <h3>{% if store %}Edit store{% else %}Add store{% endif %}</h3>
-    <span class="pill">Seller</span>
+<style>
+.store-builder{max-width:1500px;margin:0 auto}.store-builder-head{display:flex;align-items:flex-start;justify-content:space-between;gap:30px;margin-bottom:24px}.store-builder-head h2{font-size:34px;margin:6px 0}.store-builder-head p{margin:0;color:var(--muted)}.store-progress{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));width:min(650px,52vw);gap:0;margin-top:8px}.progress-step{position:relative;text-align:center;color:var(--muted);font-size:13px}.progress-step:before{content:"";position:absolute;height:2px;background:var(--border);top:15px;left:-50%;right:50%;z-index:0}.progress-step:first-child:before{display:none}.progress-dot{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;margin:0 auto 8px;background:var(--panel-strong);border:1px solid var(--border);font-weight:800}.progress-step.active{color:var(--accent);font-weight:700}.progress-step.active .progress-dot,.progress-step.complete .progress-dot{background:var(--success);color:white;border-color:transparent}.progress-step.complete:before,.progress-step.active:before{background:var(--success)}.template-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:20px}.template-grid{display:grid;grid-template-columns:repeat(3,minmax(240px,1fr));gap:16px}.template-card{background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:.2s ease;overflow:hidden}.template-card:hover{transform:translateY(-3px);border-color:rgba(16,185,129,.5)}.template-preview{height:190px;border-radius:17px;overflow:hidden;position:relative;margin-bottom:15px;border:1px solid var(--border);background:#f5f7f2;color:#112117}.preview-nav{height:28px;background:rgba(255,255,255,.9);display:flex;align-items:center;padding:0 10px;font-size:8px;font-weight:800;gap:12px}.preview-hero{height:105px;padding:18px;display:flex;align-items:center;font-weight:900;font-size:18px;line-height:1.05;background:linear-gradient(110deg,#0e542b,#4c8f42);color:white}.template-card:nth-child(2) .template-preview{background:#15100a;color:#f2d59d}.template-card:nth-child(2) .preview-nav{background:#120d09;color:#f2d59d}.template-card:nth-child(2) .preview-hero{background:linear-gradient(110deg,#24160c,#7b3f14);color:#f4d59e}.template-card:nth-child(3) .preview-hero{background:linear-gradient(110deg,#eef5df,#b7d28e);color:#18311e}.template-card:nth-child(4) .preview-hero{background:linear-gradient(110deg,#152619,#4f7e58)}.template-card:nth-child(5) .template-preview{background:#0f0d09;color:#f2d28c}.template-card:nth-child(5) .preview-nav{background:#151109;color:#f2d28c}.template-card:nth-child(5) .preview-hero{background:linear-gradient(110deg,#21180d,#59451f);color:#f4d493}.template-card:nth-child(6) .preview-hero{background:linear-gradient(110deg,#fff1dd,#ecbb74);color:#272019}.preview-products{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:8px}.preview-products span{height:34px;border-radius:7px;background:linear-gradient(135deg,#d8e8c6,#8fbd72)}.template-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.template-title-row h3{font-size:18px;margin:0}.template-badge{font-size:11px;padding:5px 9px;border-radius:999px;background:rgba(34,197,94,.12);color:var(--success);white-space:nowrap}.template-card p{color:var(--muted);font-size:13px;line-height:1.55;min-height:60px}.template-features{display:grid;gap:7px;margin:0 0 16px;padding:0;list-style:none;font-size:12px}.template-features li:before{content:"✓";color:var(--success);font-weight:900;margin-right:7px}.template-card .btn{margin-top:auto;width:100%}.builder-aside{position:sticky;top:18px;align-self:start}.builder-aside h3{font-size:22px;margin:8px 0}.builder-aside p,.builder-aside li{color:var(--muted);font-size:13px;line-height:1.55}.builder-aside ul{padding-left:18px}.builder-quote{margin-top:18px;padding:18px;border-radius:18px;background:rgba(34,197,94,.08);font-weight:800;font-style:italic;line-height:1.5}.builder-form-card{max-width:1050px;margin:0 auto}.template-summary{display:flex;justify-content:space-between;gap:18px;align-items:center;padding:16px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.03);margin-bottom:20px}.template-summary strong{font-size:18px}.template-summary p{margin:4px 0 0;color:var(--muted);font-size:13px}.field-error{color:var(--danger);font-size:12px}.required-mark{color:var(--danger)}.wizard-actions{display:flex;justify-content:space-between;gap:12px;margin-top:22px}.review-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.review-item{padding:14px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.03)}.review-item span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}.review-item strong{font-size:14px}.hidden-step{display:none!important}@media(max-width:1150px){.template-grid{grid-template-columns:repeat(2,1fr)}.template-layout{grid-template-columns:1fr}.builder-aside{position:static}.store-builder-head{display:block}.store-progress{width:100%;margin-top:20px}}@media(max-width:720px){.template-grid,.review-grid{grid-template-columns:1fr}.store-progress{grid-template-columns:repeat(3,1fr)}.progress-step{font-size:10px}.store-builder-head h2{font-size:28px}}
+</style>
+
+<div class="store-builder">
+  <a class="text-link" href="{% url 'seller_dashboard' %}">← Back to Dashboard</a>
+  <div class="store-builder-head">
+    <div>
+      <h2>{% if store %}Edit Your Store{% else %}Create Your Store{% endif %}</h2>
+      <p>{% if store %}Update your storefront design and information.{% else %}Choose a design that fits your brand and the story you want to tell.{% endif %}</p>
+    </div>
+    <div class="store-progress" id="storeProgress">
+      <div class="progress-step {% if not selected_template_key %}active{% else %}complete{% endif %}" data-progress="1"><div class="progress-dot">1</div>Choose Template</div>
+      <div class="progress-step {% if selected_template_key %}active{% endif %}" data-progress="2"><div class="progress-dot">2</div>Provide Information</div>
+      <div class="progress-step" data-progress="3"><div class="progress-dot">3</div>Review & Create</div>
+    </div>
   </div>
-  <form method="POST" enctype="multipart/form-data" class="form-grid two-col-form">
-    {% csrf_token %}
-    <label>
-      <span>Store name</span>
-      <input type="text" name="name" value="{% if store %}{{ store.name }}{% endif %}" required>
-    </label>
-    <label>
-      <span>Market</span>
-      <select name="market">
-        <option value="">Select market</option>
-        {% for market in markets %}
-          <option value="{{ market.id }}" {% if store and store.market_id == market.id %}selected{% endif %}>{{ market.name }}</option>
-        {% endfor %}
-      </select>
-    </label>
-    <label>
-      <span>Stall number</span>
-      <input type="text" name="stall_number" value="{% if store %}{{ store.stall_number }}{% endif %}">
-    </label>
-    <label>
-      <span>Store image</span>
-      <input type="file" name="store_image" accept="image/*">
-    </label>
-    <label class="full-span">
-      <span>Description</span>
-      <textarea name="description" rows="4">{% if store %}{{ store.description }}{% endif %}</textarea>
-    </label>
-    {% if store %}
-      <label class="checkbox-row full-span"><input type="checkbox" name="active" {% if store.active %}checked{% endif %}> Active store</label>
-    {% endif %}
-    <div class="full-span"><button class="btn btn-primary" type="submit">{% if store %}Save changes{% else %}Create store{% endif %}</button></div>
-  </form>
+
+  {% if not selected_template_key %}
+  <div class="template-layout">
+    <div class="template-grid">
+      {% for key, template in store_templates.items %}
+      <article class="template-card">
+        <div class="template-preview">
+          <div class="preview-nav"><strong>Market Day</strong><span>Home</span><span>Shop</span><span>About</span></div>
+          <div class="preview-hero">{% if key == 'fresh_simple' %}Farm Fresh<br>Goodness{% elif key == 'boutique' %}Authentic<br>African Flavors{% elif key == 'story_impact' %}Good Food.<br>Healthy Living.{% elif key == 'modern_market' %}Quality Produce.<br>Local Prices.{% elif key == 'premium_showcase' %}Excellence<br>in Every Harvest{% else %}Good Food.<br>Good People.{% endif %}</div>
+          <div class="preview-products"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="template-title-row"><h3>{{ forloop.counter }}. {{ template.name }}</h3><span class="template-badge">{{ template.badge }}</span></div>
+        <p>{{ template.description }}</p>
+        <ul class="template-features">{% for feature in template.features %}<li>{{ feature }}</li>{% endfor %}</ul>
+        <a class="btn btn-primary" href="?template={{ key }}">Select This Template</a>
+      </article>
+      {% endfor %}
+    </div>
+    <aside class="card builder-aside">
+      <span class="pill">Store Design</span>
+      <h3>Choose What Fits You Best</h3>
+      <p>Each design is unique. After you select one, we guide you through exactly what that design needs.</p>
+      <hr style="border:0;border-top:1px solid var(--border);margin:20px 0;">
+      <h3>Important</h3>
+      <ul>
+        <li>All required information must be provided.</li>
+        <li>Your store is not created if required fields are missing.</li>
+        <li>You review everything before final creation.</li>
+        <li>You can update your store later.</li>
+      </ul>
+      <div class="builder-quote">“A beautiful store helps you stand out and sell more.”</div>
+    </aside>
+  </div>
+
+  {% else %}
+  <div class="card builder-form-card">
+    <div class="template-summary">
+      <div><span class="pill">{{ selected_template.complexity }}</span><strong style="display:block;margin-top:8px;">{{ selected_template.name }}</strong><p>{{ selected_template.description }}</p></div>
+      {% if not store %}<a class="text-link" href="{% url 'seller_store_setup' %}">Change design</a>{% endif %}
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="storeBuilderForm" class="form-grid two-col-form">
+      {% csrf_token %}
+      <input type="hidden" name="template_key" value="{{ selected_template_key }}">
+
+      <div id="informationStep" class="full-span">
+        <div class="form-grid two-col-form">
+          <label><span>Store name <b class="required-mark">*</b></span><input type="text" name="name" value="{{ form_values.name|default:'' }}" required>{% if errors.name %}<small class="field-error">{{ errors.name }}</small>{% endif %}</label>
+          <label><span>Market <b class="required-mark">*</b></span><select name="market" required><option value="">Select market</option>{% for market in markets %}<option value="{{ market.id }}" {% if form_values.market == market.id|stringformat:'s' %}selected{% endif %}>{{ market.name }}{% if market.city %} · {{ market.city }}{% endif %}</option>{% endfor %}</select>{% if errors.market %}<small class="field-error">{{ errors.market }}</small>{% endif %}</label>
+          <label><span>Stall number</span><input type="text" name="stall_number" value="{{ form_values.stall_number|default:'' }}"></label>
+          <label><span>Store tagline <b class="required-mark">*</b></span><input type="text" name="tagline" value="{{ form_values.tagline|default:'' }}" placeholder="Fresh from our farm to your family" required>{% if errors.tagline %}<small class="field-error">{{ errors.tagline }}</small>{% endif %}</label>
+          <label class="full-span"><span>Store description <b class="required-mark">*</b></span><textarea name="description" rows="4" required>{{ form_values.description|default:'' }}</textarea>{% if errors.description %}<small class="field-error">{{ errors.description }}</small>{% endif %}</label>
+
+          <label><span>Hero / banner image {% if not store %}<b class="required-mark">*</b>{% endif %}</span><input type="file" name="store_image" accept="image/*" {% if not store %}required{% endif %}>{% if store.store_image %}<small class="muted">Current image will remain if no new file is selected.</small>{% endif %}{% if errors.store_image %}<small class="field-error">{{ errors.store_image }}</small>{% endif %}</label>
+          <label><span>Store logo {% if not store %}<b class="required-mark">*</b>{% endif %}</span><input type="file" name="logo_image" accept="image/*" {% if not store %}required{% endif %}>{% if store.logo_image %}<small class="muted">Current logo will remain if no new file is selected.</small>{% endif %}{% if errors.logo_image %}<small class="field-error">{{ errors.logo_image }}</small>{% endif %}</label>
+
+          {% if selected_template_key == 'boutique' or selected_template_key == 'story_impact' or selected_template_key == 'premium_showcase' or selected_template_key == 'creative_unique' %}
+          <label class="full-span"><span>About your store / brand story <b class="required-mark">*</b></span><textarea name="about_story" rows="4" required>{{ form_values.about_story|default:'' }}</textarea>{% if errors.about_story %}<small class="field-error">{{ errors.about_story }}</small>{% endif %}</label>
+          {% endif %}
+
+          {% if selected_template_key == 'story_impact' %}
+          <label class="full-span"><span>Community impact statement <b class="required-mark">*</b></span><textarea name="impact_statement" rows="3" required>{{ form_values.impact_statement|default:'' }}</textarea>{% if errors.impact_statement %}<small class="field-error">{{ errors.impact_statement }}</small>{% endif %}</label>
+          {% endif %}
+
+          {% if selected_template_key == 'modern_market' %}
+          <label><span>Promotion message <b class="required-mark">*</b></span><input type="text" name="promotion_text" value="{{ form_values.promotion_text|default:'' }}" placeholder="Weekend fresh produce specials" required>{% if errors.promotion_text %}<small class="field-error">{{ errors.promotion_text }}</small>{% endif %}</label>
+          <label><span>Featured category <b class="required-mark">*</b></span><input type="text" name="featured_category" value="{{ form_values.featured_category|default:'' }}" placeholder="Fresh Vegetables" required>{% if errors.featured_category %}<small class="field-error">{{ errors.featured_category }}</small>{% endif %}</label>
+          {% endif %}
+
+          {% if selected_template_key == 'premium_showcase' %}
+          <label><span>Featured collection title <b class="required-mark">*</b></span><input type="text" name="featured_collection" value="{{ form_values.featured_collection|default:'' }}" placeholder="Golden Harvest Selection" required>{% if errors.featured_collection %}<small class="field-error">{{ errors.featured_collection }}</small>{% endif %}</label>
+          <label><span>Quality promise <b class="required-mark">*</b></span><input type="text" name="quality_promise" value="{{ form_values.quality_promise|default:'' }}" placeholder="Locally sourced and quality checked" required>{% if errors.quality_promise %}<small class="field-error">{{ errors.quality_promise }}</small>{% endif %}</label>
+          {% endif %}
+
+          {% if selected_template_key == 'creative_unique' %}
+          <label><span>Custom hero headline <b class="required-mark">*</b></span><input type="text" name="custom_headline" value="{{ form_values.custom_headline|default:'' }}" placeholder="Good Food. Good People." required>{% if errors.custom_headline %}<small class="field-error">{{ errors.custom_headline }}</small>{% endif %}</label>
+          <label><span>Social media handle <b class="required-mark">*</b></span><input type="text" name="social_handle" value="{{ form_values.social_handle|default:'' }}" placeholder="@yourstore" required>{% if errors.social_handle %}<small class="field-error">{{ errors.social_handle }}</small>{% endif %}</label>
+          <label class="full-span"><span>Gallery / highlights introduction <b class="required-mark">*</b></span><textarea name="gallery_intro" rows="3" required>{{ form_values.gallery_intro|default:'' }}</textarea>{% if errors.gallery_intro %}<small class="field-error">{{ errors.gallery_intro }}</small>{% endif %}</label>
+          {% endif %}
+
+          {% if selected_template_key != 'fresh_simple' %}
+          <label><span>Customer contact phone <b class="required-mark">*</b></span><input type="tel" name="contact_phone" value="{{ form_values.contact_phone|default:'' }}" required>{% if errors.contact_phone %}<small class="field-error">{{ errors.contact_phone }}</small>{% endif %}</label>
+          {% endif %}
+
+          {% if store %}<label class="checkbox-row full-span"><input type="checkbox" name="active" {% if store.active %}checked{% endif %}> Active store</label>{% endif %}
+        </div>
+        <div class="wizard-actions"><a class="btn btn-secondary" href="{% url 'seller_dashboard' %}">Cancel</a><button class="btn btn-primary" type="button" id="reviewStoreBtn">Review Store →</button></div>
+      </div>
+
+      <div id="reviewStep" class="full-span hidden-step">
+        <div class="section-head"><div><h3>Review your store</h3><p class="muted">Confirm the information below before {% if store %}saving{% else %}creating{% endif %} your store.</p></div><span class="pill">{{ selected_template.name }}</span></div>
+        <div class="review-grid" id="storeReviewGrid"></div>
+        <div class="wizard-actions"><button class="btn btn-secondary" type="button" id="backToInfoBtn">← Edit Information</button><button class="btn btn-primary" type="submit">{% if store %}Save Store{% else %}Create Store{% endif %}</button></div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
 </div>
+
+{% if selected_template_key %}
+<script>
+(function(){
+  const form=document.getElementById('storeBuilderForm');
+  const info=document.getElementById('informationStep');
+  const review=document.getElementById('reviewStep');
+  const reviewBtn=document.getElementById('reviewStoreBtn');
+  const backBtn=document.getElementById('backToInfoBtn');
+  const grid=document.getElementById('storeReviewGrid');
+  const progress=document.querySelectorAll('.progress-step');
+  const labels={name:'Store name',market:'Market',stall_number:'Stall number',tagline:'Tagline',description:'Description',about_story:'Brand story',impact_statement:'Community impact',promotion_text:'Promotion',featured_category:'Featured category',featured_collection:'Featured collection',quality_promise:'Quality promise',custom_headline:'Hero headline',gallery_intro:'Gallery intro',contact_phone:'Contact phone',social_handle:'Social handle'};
+  function setStep(step){progress.forEach((el,i)=>{el.classList.remove('active','complete');if(i+1<step)el.classList.add('complete');if(i+1===step)el.classList.add('active')});}
+  reviewBtn.addEventListener('click',function(){
+    if(!form.reportValidity()) return;
+    grid.innerHTML='';
+    Object.keys(labels).forEach(name=>{
+      const field=form.elements[name]; if(!field||!field.value) return;
+      let value=field.value;
+      if(name==='market'&&field.options&&field.selectedIndex>=0)value=field.options[field.selectedIndex].text;
+      const item=document.createElement('div'); item.className='review-item';
+      const label=document.createElement('span'); label.textContent=labels[name];
+      const strong=document.createElement('strong'); strong.textContent=value;
+      item.appendChild(label); item.appendChild(strong); grid.appendChild(item);
+    });
+    ['store_image','logo_image'].forEach(name=>{const field=form.elements[name];if(field&&field.files&&field.files[0]){const item=document.createElement('div');item.className='review-item';item.innerHTML='<span>'+(name==='store_image'?'Hero / banner image':'Store logo')+'</span><strong></strong>';item.querySelector('strong').textContent=field.files[0].name;grid.appendChild(item);}});
+    info.classList.add('hidden-step'); review.classList.remove('hidden-step'); setStep(3); window.scrollTo({top:0,behavior:'smooth'});
+  });
+  backBtn.addEventListener('click',function(){review.classList.add('hidden-step');info.classList.remove('hidden-step');setStep(2);window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
+{% endif %}
 {% endblock %}
