@@ -4,15 +4,17 @@
 <style>
   .store-grid {
     display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));
     gap:18px;
   }
   .store-card {
     overflow:hidden;
+    min-width:0;
     border:1px solid #e4e9e5;
     border-radius:20px;
     background:#fff;
     box-shadow:0 10px 30px rgba(20,45,30,.06);
+    container-type:inline-size;
   }
   .store-card-media {
     position:relative;
@@ -38,6 +40,7 @@
     text-transform:uppercase;
   }
   .store-card-body {
+    min-width:0;
     padding:18px;
   }
   .store-card-title {
@@ -45,6 +48,7 @@
     font-size:18px;
     line-height:1.25;
     color:#10203a;
+    overflow-wrap:anywhere;
   }
   .store-card-location,
   .store-card-products {
@@ -52,6 +56,7 @@
     color:#667085;
     font-size:13px;
     line-height:1.5;
+    overflow-wrap:anywhere;
   }
   .store-card-products { margin-top:6px; }
   .store-card-meta {
@@ -60,11 +65,14 @@
     justify-content:space-between;
     gap:10px;
     margin-top:16px;
+    min-width:0;
   }
   .store-card-template {
     display:inline-flex;
     align-items:center;
     min-height:28px;
+    min-width:0;
+    max-width:100%;
     padding:6px 10px;
     border-radius:999px;
     background:#eef4ff;
@@ -77,6 +85,7 @@
     display:inline-flex;
     align-items:center;
     gap:6px;
+    flex:0 0 auto;
     color:#475467;
     font-size:11px;
     white-space:nowrap;
@@ -85,6 +94,7 @@
     content:"";
     width:8px;
     height:8px;
+    flex:0 0 8px;
     border-radius:50%;
     background:#98a2b3;
     box-shadow:0 0 0 3px rgba(152,162,179,.14);
@@ -95,26 +105,32 @@
   }
   .store-card-actions {
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:8px;
     margin-top:16px;
   }
   .store-card-actions .btn {
     width:100%;
+    min-width:0;
     justify-content:center;
+    text-align:center;
+    white-space:normal;
   }
 
-  @media (max-width:1100px) {
-    .store-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  @container (max-width:320px) {
+    .store-card-meta {
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .store-card-actions {
+      grid-template-columns:1fr;
+    }
   }
+
   @media (max-width:700px) {
     .store-grid { grid-template-columns:1fr; }
     .store-card-body { padding:16px; }
     .store-card-title { font-size:17px; }
-  }
-  @media (max-width:420px) {
-    .store-card-actions { grid-template-columns:1fr; }
-    .store-card-meta { align-items:flex-start; }
   }
 </style>
 <section class="two-col-grid">
