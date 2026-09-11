@@ -65,12 +65,13 @@
               </div>
             </button>
             <div class="profile-menu hidden" id="profileMenu" role="menu" aria-labelledby="profileMenuToggle">
-              <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}" role="menuitem">Account</a>
-              <a href="{% if user.is_authenticated %}{% url 'profile' %}#account-settings{% else %}{% url 'login' %}{% endif %}" role="menuitem">Account Settings</a>
               {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" role="menuitem">Account</a>
+                <a href="{% url 'profile' %}#account-settings" role="menuitem">Account Settings</a>
                 <a href="{% url 'logout' %}" role="menuitem">Logout</a>
               {% else %}
-                <a href="{% url 'login' %}" role="menuitem">Logout</a>
+                <a href="{% url 'login' %}" role="menuitem">Sign in</a>
+                <a href="{% url 'register' %}" role="menuitem">Create account</a>
               {% endif %}
             </div>
           </div>
