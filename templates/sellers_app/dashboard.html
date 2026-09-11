@@ -21,19 +21,19 @@
             </p>
             <p>{{ store.products.count }} product{{ store.products.count|pluralize }}</p>
           </div>
-          <div class="right-actions">
+          <div class="right-actions store-card-actions">
             {% if store.active %}<span class="pill">Active</span>{% else %}<span class="pill">Inactive</span>{% endif %}
-            <a class="text-link" href="{% url 'seller_store_change_design' store.id %}">Change Design</a>
-            <a class="text-link" href="{% url 'seller_store_edit' store.id %}">Edit</a>
+            <a class="btn btn-outline btn-xs" href="{% url 'seller_store_change_design' store.id %}">Change Design</a>
+            <a class="btn btn-ghost btn-xs" href="{% url 'seller_store_edit' store.id %}">Edit</a>
           </div>
         </div>
       {% empty %}
         <div class="empty-state">You have not created a store yet.</div>
       {% endfor %}
     </div>
-    <div class="hero-actions" style="margin-top:16px;">
-      <a class="btn btn-secondary" href="{% url 'add_product' %}">Add product</a>
-      <a class="btn btn-secondary" href="{% url 'seller_products' %}">View products</a>
+    <div class="hero-actions compact-actions" style="margin-top:16px;">
+      <a class="btn btn-secondary btn-sm" href="{% url 'add_product' %}">Add product</a>
+      <a class="btn btn-secondary btn-sm" href="{% url 'seller_products' %}">View products</a>
     </div>
   </div>
 
