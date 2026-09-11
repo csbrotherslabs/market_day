@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Boutique Preview{% endblock %}
+{% block content %}
+<style>
+.boutique-preview-page{max-width:1500px;margin:0 auto}.boutique-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}.boutique-toolbar h2{margin:0}.boutique-toolbar p{margin:4px 0 0;color:var(--muted)}.boutique-device-switch{display:flex;gap:8px;flex-wrap:wrap}.boutique-note{padding:12px 14px;border-radius:12px;background:var(--btn-green-soft);color:var(--muted);font-size:13px;margin-bottom:16px}.boutique-frame{border:1px solid var(--border);border-radius:26px;overflow:hidden;box-shadow:var(--shadow);background:#f8f1e6}.boutique-shell{max-width:100%;margin:0 auto;overflow:hidden;transition:max-width .2s ease;background:#fbf5eb;color:#28190f;font-family:Inter,Arial,sans-serif}.boutique-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+
+.bq-nav{height:78px;background:#fffaf2;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;padding:0 38px;border-bottom:1px solid #eadcc8}.bq-brand{display:flex;align-items:center;gap:12px;min-width:245px}.bq-logo-slot{width:48px;height:48px;border-radius:50%;border:1px dashed #bc8f55;background:#fff7e8;color:#a16a2c;display:grid;place-items:center;font-size:10px;text-align:center;padding:4px}.bq-brand-copy strong{font-family:Georgia,'Times New Roman',serif;display:block;font-size:23px;line-height:1;color:#422718}.bq-brand-copy small{display:block;margin-top:4px;font-size:9px;letter-spacing:1.3px;text-transform:uppercase;color:#9a7556}.bq-links{display:flex;align-items:center;justify-content:center;gap:26px;font-size:12px;font-weight:650}.bq-links span:first-child{color:#93491f;position:relative}.bq-links span:first-child:after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:2px;background:#c9873f}.bq-nav-actions{display:flex;align-items:center;gap:10px}.bq-search{width:240px;height:40px;border-radius:999px;border:1px solid #e8d8c2;background:#fffdf9;color:#9f8b79;font-size:11px;display:flex;align-items:center;justify-content:space-between;padding:0 14px}.bq-cart{width:40px;height:40px;border:1px solid #e7d7c2;border-radius:50%;display:grid;place-items:center;position:relative;background:#fff}.bq-cart:after{content:"0";position:absolute;right:-2px;top:-3px;width:18px;height:18px;border-radius:50%;background:#86441f;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center}
+
+.bq-hero{position:relative;min-height:500px;padding:62px 64px;display:flex;align-items:center;overflow:hidden;background:linear-gradient(115deg,#1b100a,#4a2615 64%,#6a3b1f)}.bq-hero-image-slot{position:absolute;inset:0;border:2px dashed rgba(255,219,163,.28);display:grid;place-items:center;text-align:center;color:rgba(255,229,189,.72);font-size:12px;letter-spacing:.4px;background:linear-gradient(135deg,rgba(34,18,9,.94),rgba(91,47,22,.82))}.bq-hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(22,11,6,.93) 0%,rgba(30,14,7,.78) 45%,rgba(54,27,13,.25) 73%,rgba(54,27,13,.08) 100%)}.bq-hero-content{position:relative;z-index:2;max-width:660px;color:#fff5e9}.bq-kicker{text-transform:uppercase;letter-spacing:4px;color:#e7b768;font-size:11px;font-weight:800;margin-bottom:12px}.bq-hero h1{font-family:Georgia,'Times New Roman',serif;font-size:60px;line-height:1;margin:0 0 18px;color:#ffe2ad;letter-spacing:-1.2px}.bq-hero p{font-size:17px;line-height:1.6;max-width:570px;margin:0 0 24px;color:#f1dfcd}.bq-primary{display:inline-flex;align-items:center;gap:12px;padding:13px 22px;border-radius:999px;background:#f3bd65;color:#2a160b;font-size:13px;font-weight:800}.bq-hero-trust{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}.bq-hero-trust-item{display:flex;gap:9px;align-items:center;font-size:11px;color:#f3dfc2;background:rgba(255,245,230,.06);border:1px solid rgba(255,225,180,.14);padding:10px 12px;border-radius:14px}.bq-trust-icon{width:27px;height:27px;border:1px solid rgba(231,183,104,.45);border-radius:50%;display:grid;place-items:center;color:#efbd69;font-size:12px}
+
+.bq-value-strip{display:grid;grid-template-columns:repeat(4,1fr);background:#fffaf2;border-bottom:1px solid #eadfce;padding:19px 32px}.bq-value{display:flex;align-items:center;gap:12px;padding:0 22px;border-right:1px solid #ecdfce}.bq-value:last-child{border-right:0}.bq-value-icon{width:42px;height:42px;border-radius:50%;border:1px solid #dcb379;color:#9f622b;background:#fff8ec;display:grid;place-items:center;font-size:17px}.bq-value strong{font-size:12px;display:block}.bq-value span{font-size:10px;color:#9e8570;display:block;margin-top:3px}
+
+.bq-section{padding:52px 54px}.bq-section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:24px}.bq-eyebrow{text-transform:uppercase;letter-spacing:3px;color:#a45b2c;font-size:10px;font-weight:800;margin-bottom:8px}.bq-section h2{font-family:Georgia,'Times New Roman',serif;font-size:40px;line-height:1.05;margin:0;color:#28170d}.bq-view-link{color:#87431f;font-size:12px;font-weight:700}.bq-category-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.bq-category{border:1px solid #eadcc8;background:#fffaf4;border-radius:18px;overflow:hidden;box-shadow:0 8px 24px rgba(87,50,21,.06)}.bq-image-slot{height:140px;border-bottom:1px dashed #d9bea0;background:#f7ecdc;color:#9a7556;display:grid;place-items:center;text-align:center;font-size:11px;padding:12px}.bq-category-body{padding:13px 14px 15px}.bq-category-body strong{display:block;font-size:13px}.bq-category-body span{display:block;color:#9b846f;font-size:10px;margin-top:3px}.bq-circle-arrow{width:30px;height:30px;border-radius:50%;background:#8c471f;color:#fff;display:grid;place-items:center;margin-top:10px;font-size:12px}
+
+.bq-products{padding-top:10px;background:#fffaf4}.bq-product-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.bq-product{border:1px solid #eadcc8;border-radius:16px;padding:11px;background:#fff;box-shadow:0 8px 22px rgba(87,50,21,.05)}.bq-product-image{height:145px;border-radius:12px;border:1px dashed #d6c1a9;background:#f7f1e9;display:grid;place-items:center;color:#9d8874;font-size:11px}.bq-product h4{font-size:13px;margin:11px 0 4px}.bq-product-price{font-weight:800;font-size:12px;color:#4b2816}.bq-stars{color:#e39a31;font-size:11px;margin-top:5px}.bq-add{margin-top:10px;width:100%;height:34px;border-radius:999px;background:linear-gradient(135deg,#945027,#713515);color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:700}
+
+.bq-story{display:grid;grid-template-columns:1.05fr .95fr;min-height:340px;background:linear-gradient(120deg,#15351f,#274a2a 62%,#f2e4cb 62%,#fbf4e8);overflow:hidden}.bq-story-copy{padding:52px 58px;color:#fff7e9;align-self:center}.bq-story-copy h2{font-family:Georgia,'Times New Roman',serif;font-size:38px;line-height:1.08;margin:0 0 16px;color:#fff0d8}.bq-story-copy p{font-size:13px;line-height:1.7;color:#e6dbc9;max-width:520px}.bq-story-btn{display:inline-flex;margin-top:12px;padding:11px 18px;border-radius:999px;background:#f3bd65;color:#2a160b;font-size:12px;font-weight:800}.bq-story-image-wrap{display:flex;align-items:center;justify-content:center;padding:32px}.bq-story-image{width:100%;height:230px;border:2px dashed #d1b589;border-radius:22px;background:#fbf6ee;display:grid;place-items:center;text-align:center;color:#9a7556;font-size:11px;padding:20px}
+
+.bq-footer{background:#241208;color:#fff0dc}.bq-footer-main{display:grid;grid-template-columns:1.2fr .7fr .7fr 1.1fr;gap:34px;padding:42px 52px}.bq-footer-logo{font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#f2c477;margin-bottom:5px}.bq-footer-tag{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:#caa77b}.bq-footer h4{font-size:12px;margin:0 0 12px}.bq-footer span,.bq-footer p{display:block;font-size:10px;line-height:1.6;color:#d2bda5;margin:0 0 7px}.bq-newsletter{display:flex;gap:7px;margin-top:12px}.bq-newsletter-input{height:36px;flex:1;background:#fff8ef;border:0;border-radius:8px;color:#8f7b69;font-size:10px;display:flex;align-items:center;padding:0 12px}.bq-subscribe{height:36px;padding:0 14px;border-radius:8px;background:#f1b85e;color:#2a160b;font-size:10px;font-weight:800;display:flex;align-items:center}.bq-footer-bottom{border-top:1px solid rgba(255,238,216,.12);padding:15px 52px;display:flex;justify-content:space-between;gap:18px;color:#bda68e;font-size:9px}
+
+@media(max-width:1100px){.bq-search{display:none}.bq-category-grid,.bq-product-grid{grid-template-columns:repeat(3,1fr)}.bq-hero h1{font-size:52px}.bq-links{gap:17px}.bq-footer-main{grid-template-columns:1fr 1fr}}
+@media(max-width:850px){.bq-nav{grid-template-columns:1fr auto;padding:0 22px}.bq-links{display:none}.bq-nav-actions{justify-self:end}.bq-hero{padding:46px 32px;min-height:440px}.bq-hero h1{font-size:46px}.bq-value-strip{grid-template-columns:repeat(2,1fr);gap:18px}.bq-value{border-right:0;padding:0}.bq-category-grid,.bq-product-grid{grid-template-columns:repeat(2,1fr)}.bq-story{grid-template-columns:1fr;background:linear-gradient(180deg,#15351f 0,#274a2a 52%,#f2e4cb 52%,#fbf4e8 100%)}.bq-story-copy{padding:42px 32px}.bq-story-image-wrap{padding:28px 32px}.bq-footer-main{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.bq-brand{min-width:0}.bq-brand-copy small{display:none}.bq-brand-copy strong{font-size:17px}.bq-logo-slot{width:40px;height:40px}.bq-nav{height:66px;padding:0 16px}.bq-hero{padding:36px 20px;min-height:430px}.bq-hero h1{font-size:38px}.bq-hero p{font-size:14px}.bq-hero-trust{display:grid;grid-template-columns:1fr 1fr}.bq-value-strip{grid-template-columns:1fr;padding:16px 20px}.bq-section{padding:38px 20px}.bq-section h2{font-size:31px}.bq-section-head{align-items:flex-start;flex-direction:column}.bq-category-grid,.bq-product-grid{grid-template-columns:1fr}.bq-story-copy{padding:36px 20px}.bq-story-copy h2{font-size:30px}.bq-story-image-wrap{padding:24px 20px}.bq-footer-main{grid-template-columns:1fr;padding:34px 24px}.bq-footer-bottom{padding:14px 24px;flex-direction:column}.bq-newsletter{flex-direction:column}.bq-subscribe{justify-content:center}}
+</style>
+
+<div class="boutique-preview-page">
+  <div class="boutique-toolbar">
+    <div>
+      <a class="text-link" href="{% url 'seller_store_setup' %}">← Back to templates</a>
+      <h2>Boutique Preview</h2>
+      <p>A richer brand-focused storefront for specialty foods, spices, herbs, and distinctive sellers.</p>
+    </div>
+    <div class="boutique-device-switch">
+      <button class="btn btn-secondary btn-sm" type="button" data-bq-width="100%">Desktop</button>
+      <button class="btn btn-secondary btn-sm" type="button" data-bq-width="820px">Tablet</button>
+      <button class="btn btn-secondary btn-sm" type="button" data-bq-width="390px">Mobile</button>
+    </div>
+  </div>
+
+  <div class="boutique-note">Template preview only — all image areas are intentionally empty so your generated assets can be added later.</div>
+
+  <div class="boutique-frame">
+    <div class="boutique-shell" id="boutiqueShell">
+      <nav class="bq-nav">
+        <div class="bq-brand"><div class="bq-logo-slot">LOGO<br>SLOT</div><div class="bq-brand-copy"><strong>Golden Harvest</strong><small>Spices · Foods · African Goodness</small></div></div>
+        <div class="bq-links"><span>Home</span><span>Shop</span><span>Our Story</span><span>Recipes</span><span>Contact</span></div>
+        <div class="bq-nav-actions"><div class="bq-search"><span>Search spices, herbs...</span><strong>⌕</strong></div><div class="bq-cart">🛒</div></div>
+      </nav>
+
+      <section class="bq-hero">
+        <div class="bq-hero-image-slot">HERO IMAGE SLOT<br>Recommended: premium African spices / specialty foods</div>
+        <div class="bq-hero-overlay"></div>
+        <div class="bq-hero-content">
+          <div class="bq-kicker">Authentic African Flavors</div>
+          <h1>Spices That<br>Tell a Story</h1>
+          <p>Premium African spices, herbs and specialty foods sourced from local farmers and trusted producers.</p>
+          <span class="bq-primary">Shop Our Collection <span>→</span></span>
+          <div class="bq-hero-trust">
+            <div class="bq-hero-trust-item"><span class="bq-trust-icon">♧</span><span>Authentic<br>Sourcing</span></div>
+            <div class="bq-hero-trust-item"><span class="bq-trust-icon">◇</span><span>Premium<br>Quality</span></div>
+            <div class="bq-hero-trust-item"><span class="bq-trust-icon">▣</span><span>Fast & Reliable<br>Delivery</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bq-value-strip">
+        <div class="bq-value"><div class="bq-value-icon">✤</div><div><strong>100% Natural</strong><span>Pure & Authentic</span></div></div>
+        <div class="bq-value"><div class="bq-value-icon">✦</div><div><strong>Support Local</strong><span>Empowering Communities</span></div></div>
+        <div class="bq-value"><div class="bq-value-icon">♧</div><div><strong>Carefully Sourced</strong><span>From Trusted Farmers</span></div></div>
+        <div class="bq-value"><div class="bq-value-icon">✥</div><div><strong>A Taste of Africa</strong><span>Bringing Traditions Home</span></div></div>
+      </section>
+
+      <section class="bq-section">
+        <div class="bq-section-head"><div><div class="bq-eyebrow">Shop by category</div><h2>Explore Our Collection</h2></div><span class="bq-view-link">View All Products →</span></div>
+        <div class="bq-category-grid">
+          <article class="bq-category"><div class="bq-image-slot">CATEGORY IMAGE SLOT<br>Spices</div><div class="bq-category-body"><strong>Spices</strong><span>Bold Flavors</span><div class="bq-circle-arrow">→</div></div></article>
+          <article class="bq-category"><div class="bq-image-slot">CATEGORY IMAGE SLOT<br>Herbs</div><div class="bq-category-body"><strong>Herbs</strong><span>Natural Goodness</span><div class="bq-circle-arrow">→</div></div></article>
+          <article class="bq-category"><div class="bq-image-slot">CATEGORY IMAGE SLOT<br>Grains & Staples</div><div class="bq-category-body"><strong>Grains & Staples</strong><span>Everyday Essentials</span><div class="bq-circle-arrow">→</div></div></article>
+          <article class="bq-category"><div class="bq-image-slot">CATEGORY IMAGE SLOT<br>Dried Foods</div><div class="bq-category-body"><strong>Dried Foods</strong><span>Wholesome & Nutritious</span><div class="bq-circle-arrow">→</div></div></article>
+          <article class="bq-category"><div class="bq-image-slot">CATEGORY IMAGE SLOT<br>Specialty Foods</div><div class="bq-category-body"><strong>Specialty Foods</strong><span>Unique Finds</span><div class="bq-circle-arrow">→</div></div></article>
+        </div>
+      </section>
+
+      <section class="bq-section bq-products">
+        <div class="bq-section-head"><div><h2>Featured Products</h2></div><span class="bq-view-link">View All Products →</span></div>
+        <div class="bq-product-grid">
+          <article class="bq-product"><div class="bq-product-image">PRODUCT IMAGE SLOT</div><h4>Suya Spice Blend</h4><div class="bq-product-price">GHS 48.00</div><div class="bq-stars">★★★★★ <span style="color:#9b846f;">(24)</span></div><div class="bq-add">🛒 Add to Cart</div></article>
+          <article class="bq-product"><div class="bq-product-image">PRODUCT IMAGE SLOT</div><h4>Hibiscus Flowers</h4><div class="bq-product-price">GHS 38.00</div><div class="bq-stars">★★★★★ <span style="color:#9b846f;">(18)</span></div><div class="bq-add">🛒 Add to Cart</div></article>
+          <article class="bq-product"><div class="bq-product-image">PRODUCT IMAGE SLOT</div><h4>Grains of Selim</h4><div class="bq-product-price">GHS 55.00</div><div class="bq-stars">★★★★★ <span style="color:#9b846f;">(12)</span></div><div class="bq-add">🛒 Add to Cart</div></article>
+          <article class="bq-product"><div class="bq-product-image">PRODUCT IMAGE SLOT</div><h4>African Black Pepper</h4><div class="bq-product-price">GHS 44.00</div><div class="bq-stars">★★★★★ <span style="color:#9b846f;">(20)</span></div><div class="bq-add">🛒 Add to Cart</div></article>
+          <article class="bq-product"><div class="bq-product-image">PRODUCT IMAGE SLOT</div><h4>Ground Ginger</h4><div class="bq-product-price">GHS 32.00</div><div class="bq-stars">★★★★★ <span style="color:#9b846f;">(16)</span></div><div class="bq-add">🛒 Add to Cart</div></article>
+        </div>
+      </section>
+
+      <section class="bq-story">
+        <div class="bq-story-copy"><div class="bq-eyebrow" style="color:#e6b260;">Our story</div><h2>Rooted in Tradition,<br>Growing Brighter Tomorrows</h2><p>We work directly with local farmers to bring you distinctive African spices and foods — supporting communities, preserving traditions, and sharing authentic flavors.</p><span class="bq-story-btn">Learn Our Story →</span></div>
+        <div class="bq-story-image-wrap"><div class="bq-story-image">OUR STORY IMAGE SLOT<br>Recommended: spices, farmer, or sourcing story</div></div>
+      </section>
+
+      <footer class="bq-footer">
+        <div class="bq-footer-main">
+          <div><div class="bq-footer-logo">Golden Harvest</div><div class="bq-footer-tag">Spices · Foods · African Goodness</div></div>
+          <div><h4>Shop</h4><span>All Products</span><span>Spices</span><span>Herbs</span><span>Grains & Staples</span><span>Specialty Foods</span></div>
+          <div><h4>Support</h4><span>Our Story</span><span>Shipping & Delivery</span><span>Returns & Refunds</span><span>FAQ</span><span>Contact Us</span></div>
+          <div><h4>Stay Connected</h4><p>Join our newsletter for exclusive offers and new arrivals.</p><div class="bq-newsletter"><div class="bq-newsletter-input">Your email address</div><div class="bq-subscribe">Subscribe</div></div></div>
+        </div>
+        <div class="bq-footer-bottom"><span>© 2026 Golden Harvest. All rights reserved.</span><span>Good Food. Brighter Tomorrows.</span></div>
+      </footer>
+    </div>
+  </div>
+
+  <div class="boutique-actions"><a class="btn btn-primary" href="{% url 'seller_store_setup' %}?template=boutique">Use Boutique</a><a class="btn btn-secondary" href="{% url 'seller_store_setup' %}">View all templates</a></div>
+</div>
+
+<script>
+document.querySelectorAll('[data-bq-width]').forEach(function(button){button.addEventListener('click',function(){document.getElementById('boutiqueShell').style.maxWidth=button.dataset.bqWidth;});});
+</script>
+{% endblock %}
