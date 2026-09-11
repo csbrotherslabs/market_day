@@ -2,9 +2,12 @@
 {% block title %}Seller Dashboard{% endblock %}
 {% block content %}
 <style>
+  .stores-panel {
+    container-type:inline-size;
+  }
   .store-grid {
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:18px;
   }
   .store-card {
@@ -117,6 +120,10 @@
     white-space:normal;
   }
 
+  @container (max-width:720px) {
+    .store-grid { grid-template-columns:1fr; }
+  }
+
   @container (max-width:320px) {
     .store-card-meta {
       align-items:flex-start;
@@ -128,13 +135,12 @@
   }
 
   @media (max-width:700px) {
-    .store-grid { grid-template-columns:1fr; }
     .store-card-body { padding:16px; }
     .store-card-title { font-size:17px; }
   }
 </style>
 <section class="two-col-grid">
-  <div class="card">
+  <div class="card stores-panel">
     <div class="section-head">
       <h3>Your stores</h3>
       <a class="btn btn-primary btn-sm" href="{% url 'seller_store_setup' %}">Add store</a>
