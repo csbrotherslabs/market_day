@@ -54,3 +54,30 @@ if (profileMenuToggle && profileMenu) {
     }
   });
 }
+
+// Add a non-destructive full-template preview action to the store creation cards.
+if (window.location.pathname.endsWith('/sellers/stores/add/')) {
+  document.querySelectorAll('.template-card').forEach((card) => {
+    const selectLink = card.querySelector('a[href^="?template="]');
+    if (!selectLink || card.querySelector('.template-preview-action')) return;
+
+    const match = selectLink.getAttribute('href').match(/\?template=([^&]+)/);
+    if (!match) return;
+
+    const templateKey = encodeURIComponent(match[1]);
+    const actions = document.createElement('div');
+    actions.className = 'template-card-actions';
+
+    const previewLink = document.createElement('a');
+    previewLink.className = 'btn btn-outline btn-sm template-preview-action';
+    previewLink.href = `/sellers/stores/templates/${templateKey}/preview/`;
+    previewLink.target = '_blank';
+    previewLink.rel = 'noopener';
+    previewLink.textContent = 'Preview Template';
+
+    selectLink.classList.add('btn-sm');
+    actions.appendChild(previewLink);
+    actions.appendChild(selectLink);
+    card.appendChild(actions);
+  });
+}
