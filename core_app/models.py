@@ -27,12 +27,24 @@ class SellerProfile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE); market=models.ForeignKey(Market,on_delete=models.SET_NULL,blank=True,null=True); stall_name=models.CharField(max_length=255,blank=True); stall_number=models.CharField(max_length=100,blank=True); description=models.TextField(blank=True); active=models.BooleanField(default=True); rating_avg=models.DecimalField(max_digits=3, decimal_places=2, default=0); seller_photo=models.ImageField(upload_to=seller_profile_image_path, blank=True, null=True); store_image=models.ImageField(upload_to=seller_store_image_path, blank=True, null=True)
 
 class SellerStore(models.Model):
+    TEMPLATE_CHOICES = [
+        ('fresh_simple', 'Fresh & Simple'),
+        ('boutique', 'Boutique'),
+        ('story_impact', 'Story & Impact'),
+        ('modern_market', 'Modern Market'),
+        ('premium_showcase', 'Premium Showcase'),
+        ('creative_unique', 'Creative & Unique'),
+    ]
+
     seller=models.ForeignKey(SellerProfile,on_delete=models.CASCADE,related_name='stores')
     market=models.ForeignKey(Market,on_delete=models.SET_NULL,blank=True,null=True,related_name='seller_stores')
     name=models.CharField(max_length=255)
     stall_number=models.CharField(max_length=100,blank=True)
     description=models.TextField(blank=True)
     store_image=models.ImageField(upload_to=seller_store_image_path,blank=True,null=True)
+    logo_image=models.ImageField(upload_to=seller_store_image_path,blank=True,null=True)
+    template_key=models.CharField(max_length=40,choices=TEMPLATE_CHOICES,default='fresh_simple')
+    template_data=models.JSONField(default=dict,blank=True)
     active=models.BooleanField(default=True)
     created_at=models.DateTimeField(auto_now_add=True)
 
