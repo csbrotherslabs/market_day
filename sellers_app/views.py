@@ -6,9 +6,89 @@ from core_app.decorators import role_required
 from core_app.models import Category, Market, Order, Product, SellerProfile, SellerStore
 
 
+STORE_TEMPLATES = {
+    'fresh_simple': {
+        'name': 'Fresh & Simple',
+        'badge': 'Most Popular',
+        'complexity': 'Simple',
+        'description': 'A clean, modern storefront focused on freshness and easy shopping.',
+        'features': ['Hero banner + logo', 'Product grid', 'Category menu', 'Store information'],
+        'required_fields': ['tagline'],
+    },
+    'boutique': {
+        'name': 'Boutique',
+        'badge': 'Brand Focused',
+        'complexity': 'Moderate',
+        'description': 'A polished storefront for specialty foods, spices, herbs, and distinctive brands.',
+        'features': ['Hero banner + logo', 'Featured categories', 'About section', 'Contact information'],
+        'required_fields': ['tagline', 'about_story', 'contact_phone'],
+    },
+    'story_impact': {
+        'name': 'Story & Impact',
+        'badge': 'Community',
+        'complexity': 'Moderate',
+        'description': 'Tell your story, mission, and community impact while showcasing your products.',
+        'features': ['Hero banner + logo', 'Our story section', 'Product categories', 'Impact information'],
+        'required_fields': ['tagline', 'about_story', 'impact_statement', 'contact_phone'],
+    },
+    'modern_market': {
+        'name': 'Modern Market',
+        'badge': 'Feature Rich',
+        'complexity': 'Advanced',
+        'description': 'A versatile storefront with promotions, featured products, and stronger merchandising.',
+        'features': ['Hero banner + logo', 'Promotions section', 'Category showcase', 'Featured products'],
+        'required_fields': ['tagline', 'promotion_text', 'featured_category', 'contact_phone'],
+    },
+    'premium_showcase': {
+        'name': 'Premium Showcase',
+        'badge': 'Premium',
+        'complexity': 'Advanced',
+        'description': 'A premium presentation for established sellers who want deeper brand storytelling.',
+        'features': ['Hero banner + logo', 'Featured collections', 'Customer trust section', 'Brand story'],
+        'required_fields': ['tagline', 'about_story', 'featured_collection', 'quality_promise', 'contact_phone'],
+    },
+    'creative_unique': {
+        'name': 'Creative & Unique',
+        'badge': 'Most Customizable',
+        'complexity': 'Expert',
+        'description': 'A visually rich storefront with flexible storytelling and custom merchandising areas.',
+        'features': ['Hero banner + logo', 'Gallery / highlights', 'Custom headline', 'About / story section'],
+        'required_fields': ['tagline', 'custom_headline', 'about_story', 'gallery_intro', 'contact_phone', 'social_handle'],
+    },
+}
+
+STORE_FIELD_LABELS = {
+    'tagline': 'Store tagline',
+    'about_story': 'About your store / brand story',
+    'impact_statement': 'Community impact statement',
+    'promotion_text': 'Promotion message',
+    'featured_category': 'Featured category',
+    'featured_collection': 'Featured collection title',
+    'quality_promise': 'Quality promise',
+    'custom_headline': 'Custom hero headline',
+    'gallery_intro': 'Gallery / highlights introduction',
+    'contact_phone': 'Customer contact phone',
+    'social_handle': 'Social media handle',
+}
+
+
 def _get_seller_profile(user):
     profile, created = SellerProfile.objects.get_or_create(user=user)
     return profile
+
+
+def _store_form_context(store=None, selected_template='', markets=None, errors=None, form_values=None):
+    template = STORE_TEMPLATES.get(selected_template)
+    return {
+        'store': store,
+        'markets': markets or Market.objects.filter(active=True),
+        'store_templates': STORE_TEMPLATES,
+        'selected_template_key': selected_template,
+        'selected_template': template,
+        'errors': errors or {},
+        'form_values': form_values or {},
+        'field_labels': STORE_FIELD_LABELS,
+    }
 
 
 @login_required
@@ -33,35 +113,112 @@ def store_setup(request, store_id=None):
     store = None
     if store_id is not None:
         store = get_object_or_404(SellerStore, id=store_id, seller=seller_profile)
-    markets = Market.objects.filter(active=True)
+
+    markets = Market.objects.filter(active=True).order_by('name')
+    selected_template = (
+        request.POST.get('template_key', '').strip()
+        if request.method == 'POST'
+        else request.GET.get('template', '').strip()
+    )
+    if store and not selected_template:
+        selected_template = store.template_key or 'fresh_simple'
+
+    # New stores begin on the template-selection screen.
+    if store is None and request.method == 'GET' and selected_template not in STORE_TEMPLATES:
+        return render(request, 'sellers_app/store_setup.html', _store_form_context(
+            store=store,
+            selected_template='',
+            markets=markets,
+        ))
+
+    if selected_template not in STORE_TEMPLATES:
+        messages.error(request, 'Select a valid store design.')
+        return render(request, 'sellers_app/store_setup.html', _store_form_context(
+            store=store,
+            selected_template='',
+            markets=markets,
+        ))
+
+    template_config = STORE_TEMPLATES[selected_template]
 
     if request.method == 'POST':
-        market_id = request.POST.get('market') or None
-        name = request.POST.get('name', '').strip()
-        stall_number = request.POST.get('stall_number', '').strip()
-        description = request.POST.get('description', '').strip()
+        form_values = {
+            'name': request.POST.get('name', '').strip(),
+            'market': request.POST.get('market', '').strip(),
+            'stall_number': request.POST.get('stall_number', '').strip(),
+            'description': request.POST.get('description', '').strip(),
+        }
+        for field in STORE_FIELD_LABELS:
+            form_values[field] = request.POST.get(field, '').strip()
 
-        if not name:
-            messages.error(request, 'Store name is required.')
-        else:
-            if store is None:
-                store = SellerStore(seller=seller_profile)
-            store.market_id = market_id
-            store.name = name
-            store.stall_number = stall_number
-            store.description = description
-            store.active = request.POST.get('active') == 'on' if store.pk else True
-            if request.FILES.get('store_image'):
-                store.store_image = request.FILES['store_image']
-            store.save()
-            messages.success(request, 'Store saved successfully.')
-            return redirect('seller_dashboard')
+        errors = {}
+        if not form_values['name']:
+            errors['name'] = 'Store name is required.'
+        if not form_values['market']:
+            errors['market'] = 'Market is required.'
+        elif not markets.filter(id=form_values['market']).exists():
+            errors['market'] = 'Select a valid active market.'
+        if not form_values['description']:
+            errors['description'] = 'Store description is required.'
 
-    return render(request, 'sellers_app/store_setup.html', {
-        'seller_profile': seller_profile,
-        'store': store,
-        'markets': markets,
-    })
+        for field in template_config['required_fields']:
+            if not form_values.get(field):
+                errors[field] = f'{STORE_FIELD_LABELS[field]} is required for this design.'
+
+        if store is None and not request.FILES.get('store_image'):
+            errors['store_image'] = 'A hero/banner image is required.'
+        if store is None and not request.FILES.get('logo_image'):
+            errors['logo_image'] = 'A store logo is required.'
+
+        if errors:
+            messages.error(request, 'Complete all required fields before creating your store.')
+            return render(request, 'sellers_app/store_setup.html', _store_form_context(
+                store=store,
+                selected_template=selected_template,
+                markets=markets,
+                errors=errors,
+                form_values=form_values,
+            ))
+
+        if store is None:
+            store = SellerStore(seller=seller_profile)
+
+        store.market_id = form_values['market']
+        store.name = form_values['name']
+        store.stall_number = form_values['stall_number']
+        store.description = form_values['description']
+        store.template_key = selected_template
+        store.template_data = {
+            field: form_values.get(field, '')
+            for field in STORE_FIELD_LABELS
+            if form_values.get(field, '')
+        }
+        store.active = request.POST.get('active') == 'on' if store.pk else True
+        if request.FILES.get('store_image'):
+            store.store_image = request.FILES['store_image']
+        if request.FILES.get('logo_image'):
+            store.logo_image = request.FILES['logo_image']
+        store.save()
+
+        messages.success(request, f'{store.name} was saved with the {template_config["name"]} design.')
+        return redirect('seller_dashboard')
+
+    form_values = {}
+    if store:
+        form_values = {
+            'name': store.name,
+            'market': str(store.market_id or ''),
+            'stall_number': store.stall_number,
+            'description': store.description,
+            **(store.template_data or {}),
+        }
+
+    return render(request, 'sellers_app/store_setup.html', _store_form_context(
+        store=store,
+        selected_template=selected_template,
+        markets=markets,
+        form_values=form_values,
+    ))
 
 
 @login_required
