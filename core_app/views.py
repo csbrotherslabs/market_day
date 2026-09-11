@@ -17,6 +17,21 @@ def _get_user_city(request):
     return request.session.get('current_city', '')
 
 
+def _redirect_authenticated_user(user):
+    role = getattr(user.profile, 'role', '') if hasattr(user, 'profile') else ''
+    if role == 'BUYER':
+        return redirect('buyer_dashboard')
+    if role == 'SELLER':
+        return redirect('seller_dashboard')
+    if role == 'DRIVER':
+        return redirect('driver_dashboard')
+    if role == 'QA':
+        return redirect('qa_dashboard')
+    if role == 'ADMIN_STAFF' or user.is_staff or user.is_superuser:
+        return redirect('admin_dashboard')
+    return redirect('home')
+
+
 def home(request):
     selected_city = _get_user_city(request)
     markets = Market.objects.filter(active=True)
@@ -32,6 +47,9 @@ def home(request):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return _redirect_authenticated_user(request.user)
+
     if request.method == 'POST':
         login_value = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
@@ -39,23 +57,15 @@ def login_view(request):
         if user:
             login(request, user)
             messages.success(request, f'Welcome back, {user.first_name or user.username}.')
-            role = getattr(user.profile, 'role', '') if hasattr(user, 'profile') else ''
-            if role == 'BUYER':
-                return redirect('buyer_dashboard')
-            if role == 'SELLER':
-                return redirect('seller_dashboard')
-            if role == 'DRIVER':
-                return redirect('driver_dashboard')
-            if role == 'QA':
-                return redirect('qa_dashboard')
-            if role == 'ADMIN_STAFF' or user.is_staff or user.is_superuser:
-                return redirect('admin_dashboard')
-            return redirect('home')
+            return _redirect_authenticated_user(user)
         messages.error(request, 'Invalid username/email or password.')
     return render(request, 'core_app/login.html')
 
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return _redirect_authenticated_user(request.user)
+
     markets = Market.objects.filter(active=True)
     errors = {}
     if request.method == 'POST':
@@ -96,7 +106,7 @@ def register_view(request):
             user.profile.save()
             login(request, user)
             messages.success(request, 'Account created successfully.')
-            return redirect('home')
+            return _redirect_authenticated_user(user)
     return render(request, 'core_app/register.html', {'markets': markets, 'errors': errors})
 
 
