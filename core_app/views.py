@@ -4,10 +4,24 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Sum
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
-from .models import Market, Product
+from .models import (
+    DeliveryAssignment,
+    Dispute,
+    DriverProfile,
+    Market,
+    Order,
+    OrderItem,
+    Product,
+    QAProfile,
+    QAReport,
+    SellerProfile,
+    SellerStore,
+)
 from .utils.uploads import reverse_geocode_coordinates, validate_image_upload
 
 
@@ -42,8 +56,95 @@ def home(request):
             markets = city_markets
         else:
             no_city_match = True
-    products = Product.objects.filter(active=True).select_related('seller', 'category')[:8]
-    return render(request, 'core_app/home.html', {'markets': markets, 'products': products, 'no_city_match': no_city_match})
+
+    products = Product.objects.filter(active=True).select_related('seller', 'store', 'category')[:8]
+    context = {
+        'markets': markets[:6],
+        'products': products,
+        'no_city_match': no_city_match,
+    }
+
+    if request.user.is_authenticated and hasattr(request.user, 'profile'):
+        role = request.user.profile.role
+        context['home_role'] = role
+        context['welcome_name'] = request.user.first_name or request.user.username
+        today = timezone.localdate()
+
+        if role == 'SELLER':
+            seller_profile, _ = SellerProfile.objects.get_or_create(user=request.user)
+            seller_orders = Order.objects.filter(items__seller=seller_profile).distinct().order_by('-created_at')
+            seller_items_today = OrderItem.objects.filter(
+                seller=seller_profile,
+                order__created_at__date=today,
+            ).exclude(order__status__in=['CANCELLED', 'QA_REJECTED'])
+            context.update({
+                'seller_profile': seller_profile,
+                'seller_stores': SellerStore.objects.filter(seller=seller_profile).select_related('market').order_by('name')[:4],
+                'seller_store_count': SellerStore.objects.filter(seller=seller_profile).count(),
+                'seller_product_count': Product.objects.filter(seller=seller_profile, active=True).count(),
+                'seller_new_orders': seller_orders.filter(status='CREATED').count(),
+                'seller_qa_pending': seller_orders.filter(status__in=['SELLER_CONFIRMED', 'QA_PENDING']).count(),
+                'seller_low_stock_count': Product.objects.filter(seller=seller_profile, active=True, available_qty__lte=5).count(),
+                'seller_low_stock_products': Product.objects.filter(seller=seller_profile, active=True, available_qty__lte=5).select_related('store').order_by('available_qty')[:5],
+                'seller_sales_today': seller_items_today.aggregate(total=Sum('line_total'))['total'] or Decimal('0.00'),
+                'seller_recent_orders': seller_orders[:5],
+            })
+
+        elif role == 'BUYER':
+            buyer_orders = Order.objects.filter(buyer=request.user).order_by('-created_at')
+            cart = request.session.get('cart', {})
+            context.update({
+                'buyer_active_orders': buyer_orders.exclude(status__in=['DELIVERED', 'CANCELLED']).count(),
+                'buyer_delivered_orders': buyer_orders.filter(status='DELIVERED').count(),
+                'buyer_cart_count': sum(cart.values()) if cart else 0,
+                'buyer_recent_orders': buyer_orders[:5],
+                'buyer_markets': markets[:4],
+                'buyer_products': Product.objects.filter(active=True, store__active=True).select_related('seller', 'store', 'category')[:6],
+            })
+
+        elif role == 'DRIVER':
+            driver_profile, _ = DriverProfile.objects.get_or_create(user=request.user)
+            assignments = DeliveryAssignment.objects.filter(driver=request.user).select_related('order', 'order__market').order_by('-created_at')
+            context.update({
+                'driver_profile': driver_profile,
+                'driver_assigned_count': assignments.filter(status='ASSIGNED').count(),
+                'driver_active_count': assignments.filter(status__in=['ASSIGNED', 'ACCEPTED']).count(),
+                'driver_completed_today': assignments.filter(status='COMPLETED', delivered_at__date=today).count(),
+                'driver_assignments': assignments.exclude(status__in=['COMPLETED', 'DECLINED'])[:6],
+                'driver_recent_completed': assignments.filter(status='COMPLETED')[:4],
+            })
+
+        elif role == 'QA':
+            qa_profile, _ = QAProfile.objects.get_or_create(user=request.user)
+            qa_queue = Order.objects.filter(status__in=['SELLER_CONFIRMED', 'QA_PENDING']).select_related('market').order_by('created_at')
+            context.update({
+                'qa_profile': qa_profile,
+                'qa_queue_count': qa_queue.count(),
+                'qa_queue': qa_queue[:6],
+                'qa_reviewed_today': QAReport.objects.filter(qa_user=request.user, created_at__date=today).count(),
+                'qa_approved_today': QAReport.objects.filter(qa_user=request.user, created_at__date=today, result='APPROVED').count(),
+                'qa_flagged_today': QAReport.objects.filter(qa_user=request.user, created_at__date=today, result__in=['PARTIAL', 'REJECTED']).count(),
+            })
+
+        elif role == 'ADMIN_STAFF':
+            context.update({
+                'admin_orders_count': Order.objects.count(),
+                'admin_open_disputes': Dispute.objects.filter(status__in=['OPEN', 'IN_REVIEW']).count(),
+                'admin_pending_delivery': Order.objects.filter(status='DRIVER_PENDING_ASSIGNMENT').count(),
+                'admin_users_count': User.objects.count(),
+                'admin_recent_orders': Order.objects.select_related('buyer', 'market').order_by('-created_at')[:6],
+                'admin_attention_orders': Order.objects.filter(status__in=['DISPUTED', 'QA_REJECTED', 'DRIVER_PENDING_ASSIGNMENT']).select_related('buyer', 'market').order_by('-updated_at')[:6],
+            })
+
+        elif role == 'SUPER_USER':
+            context.update({
+                'super_orders_count': Order.objects.count(),
+                'super_markets_count': Market.objects.filter(active=True).count(),
+                'super_products_count': Product.objects.filter(active=True).count(),
+                'super_open_disputes': Dispute.objects.filter(status__in=['OPEN', 'IN_REVIEW']).count(),
+            })
+
+    return render(request, 'core_app/home.html', context)
 
 
 def login_view(request):
