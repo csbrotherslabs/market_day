@@ -26,6 +26,19 @@ class Category(models.Model):
 class SellerProfile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE); market=models.ForeignKey(Market,on_delete=models.SET_NULL,blank=True,null=True); stall_name=models.CharField(max_length=255,blank=True); stall_number=models.CharField(max_length=100,blank=True); description=models.TextField(blank=True); active=models.BooleanField(default=True); rating_avg=models.DecimalField(max_digits=3, decimal_places=2, default=0); seller_photo=models.ImageField(upload_to=seller_profile_image_path, blank=True, null=True); store_image=models.ImageField(upload_to=seller_store_image_path, blank=True, null=True)
 
+class SellerStore(models.Model):
+    seller=models.ForeignKey(SellerProfile,on_delete=models.CASCADE,related_name='stores')
+    market=models.ForeignKey(Market,on_delete=models.SET_NULL,blank=True,null=True,related_name='seller_stores')
+    name=models.CharField(max_length=255)
+    stall_number=models.CharField(max_length=100,blank=True)
+    description=models.TextField(blank=True)
+    store_image=models.ImageField(upload_to=seller_store_image_path,blank=True,null=True)
+    active=models.BooleanField(default=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
 class DriverProfile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE); vehicle_type=models.CharField(max_length=100,blank=True); license_id=models.CharField(max_length=100,blank=True); region=models.CharField(max_length=100,blank=True); active=models.BooleanField(default=True); rating_avg=models.DecimalField(max_digits=3, decimal_places=2, default=0)
 
@@ -33,7 +46,7 @@ class QAProfile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE); region=models.CharField(max_length=100,blank=True); active=models.BooleanField(default=True)
 
 class Product(models.Model):
-    seller=models.ForeignKey(SellerProfile,on_delete=models.CASCADE,related_name='products'); category=models.ForeignKey(Category,on_delete=models.SET_NULL,blank=True,null=True); name=models.CharField(max_length=255); description=models.TextField(blank=True); price=models.DecimalField(max_digits=10, decimal_places=2); unit=models.CharField(max_length=50, default='piece'); available_qty=models.PositiveIntegerField(default=0); image=models.ImageField(upload_to=seller_product_image_path, blank=True, null=True); active=models.BooleanField(default=True); created_at=models.DateTimeField(auto_now_add=True)
+    seller=models.ForeignKey(SellerProfile,on_delete=models.CASCADE,related_name='products'); store=models.ForeignKey(SellerStore,on_delete=models.SET_NULL,blank=True,null=True,related_name='products'); category=models.ForeignKey(Category,on_delete=models.SET_NULL,blank=True,null=True); name=models.CharField(max_length=255); description=models.TextField(blank=True); price=models.DecimalField(max_digits=10, decimal_places=2); unit=models.CharField(max_length=50, default='piece'); available_qty=models.PositiveIntegerField(default=0); image=models.ImageField(upload_to=seller_product_image_path, blank=True, null=True); active=models.BooleanField(default=True); created_at=models.DateTimeField(auto_now_add=True)
 
 class Order(models.Model):
     STATUS_CHOICES=[('CREATED','Created'),('SELLER_CONFIRMED','Seller Confirmed'),('QA_PENDING','QA Pending'),('QA_APPROVED','QA Approved'),('QA_PARTIAL','QA Partial'),('QA_REJECTED','QA Rejected'),('DRIVER_PENDING_ASSIGNMENT','Driver Pending Assignment'),('DRIVER_ASSIGNED','Driver Assigned'),('OUT_FOR_DELIVERY','Out For Delivery'),('DELIVERED','Delivered'),('CANCELLED','Cancelled'),('DISPUTED','Disputed')]
