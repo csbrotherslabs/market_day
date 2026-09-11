@@ -27,7 +27,7 @@ def dashboard(request):
 @role_required(['BUYER'])
 def market_products(request, market_id):
     market = get_object_or_404(Market, id=market_id)
-    products = Product.objects.filter(seller__market=market, active=True).select_related('seller', 'category')
+    products = Product.objects.filter(store__market=market, store__active=True, active=True).select_related('seller', 'store', 'category')
     return render(request, 'buyers_app/market_products.html', {'market': market, 'products': products})
 
 
@@ -59,7 +59,7 @@ def remove_from_cart(request, product_id):
 def cart_view(request):
     cart = _get_cart(request.session)
     product_ids = [int(pid) for pid in cart.keys()] if cart else []
-    products = Product.objects.filter(id__in=product_ids).select_related('seller')
+    products = Product.objects.filter(id__in=product_ids).select_related('seller', 'store')
     items = []
     subtotal = Decimal('0.00')
     for product in products:
@@ -86,7 +86,7 @@ def checkout(request):
         return redirect('buyer_cart')
 
     product_ids = [int(pid) for pid in cart.keys()]
-    products = Product.objects.filter(id__in=product_ids).select_related('seller__market')
+    products = Product.objects.filter(id__in=product_ids).select_related('seller', 'store__market')
     subtotal = Decimal('0.00')
     for product in products:
         subtotal += product.price * cart[str(product.id)]
@@ -100,7 +100,8 @@ def checkout(request):
         if not delivery_address or not delivery_phone:
             messages.error(request, 'Delivery address and phone are required.')
         else:
-            first_market = products.first().seller.market if products.first() else None
+            first_product = products.first()
+            first_market = first_product.store.market if first_product and first_product.store else None
             order = Order.objects.create(
                 buyer=request.user,
                 market=first_market,
