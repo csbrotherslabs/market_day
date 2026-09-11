@@ -78,6 +78,7 @@ def store_template_preview(request, template_key):
         'boutique': 'sellers_app/store_template_preview_boutique.html',
         'story_impact': 'sellers_app/store_template_preview_story_impact.html',
         'modern_market': 'sellers_app/store_template_preview_modern_market.html',
+        'premium_showcase': 'sellers_app/store_template_preview_premium_showcase.html',
     }
     template_name = dedicated_templates.get(template_key, 'sellers_app/store_template_preview.html')
 
