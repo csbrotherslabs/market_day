@@ -15,6 +15,9 @@
         <span>Password</span>
         <input type="password" name="password" id="password" required autocomplete="current-password">
       </label>
+      <div class="auth-form-meta">
+        <a href="{% url 'password_reset' %}">Forgot password?</a>
+      </div>
       <button class="btn btn-primary" type="submit">Sign in</button>
     </form>
     <p class="muted">New to MarketFlow Africa? <a href="{% url 'register' %}">Create an account</a>.</p>
