@@ -6,11 +6,11 @@
     <div class="section-head"><h3>Create your account</h3><span class="pill">New user</span></div>
     <form method="POST" class="form-grid two-col-form">
       {% csrf_token %}
-      <label><span>First name</span><input type="text" name="first_name" required></label>
-      <label><span>Last name</span><input type="text" name="last_name"></label>
-      <label><span>Username</span><input type="text" name="username" required></label>
-      <label><span>Email</span><input type="email" name="email"></label>
-      <label><span>Phone</span><input type="text" name="phone"></label>
+      <label><span>First name</span><input type="text" name="first_name" value="{{ request.POST.first_name }}" required></label>
+      <label><span>Last name</span><input type="text" name="last_name" value="{{ request.POST.last_name }}"></label>
+      <label><span>Username</span><input type="text" name="username" value="{{ request.POST.username }}" required>{% if errors.username %}<small class="muted">{{ errors.username }}</small>{% endif %}</label>
+      <label><span>Email</span><input type="email" name="email" value="{{ request.POST.email }}" required autocomplete="email">{% if errors.email %}<small class="muted">{{ errors.email }}</small>{% endif %}</label>
+      <label><span>Phone</span><input type="text" name="phone" value="{{ request.POST.phone }}"></label>
       <label><span>Role</span>
         <select name="role">
           <option value="BUYER">Buyer</option>
@@ -22,7 +22,7 @@
         </select>
       </label>
       <label><span>Password</span><input type="password" name="password" required></label>
-      <label><span>Confirm password</span><input type="password" name="confirm_password" required></label>
+      <label><span>Confirm password</span><input type="password" name="confirm_password" required>{% if errors.password %}<small class="muted">{{ errors.password }}</small>{% endif %}</label>
       <div class="full-span"><button class="btn btn-primary" type="submit">Create account</button></div>
     </form>
   </div>
