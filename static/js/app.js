@@ -61,7 +61,23 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
     const style = document.createElement('style');
     style.id = 'templateCardActionStyles';
     style.textContent = `
-      .template-card { height: 100%; }
+      .template-grid {
+        grid-template-columns: repeat(auto-fit, minmax(285px, 1fr)) !important;
+        align-items: stretch;
+      }
+      .template-card {
+        height: 100%;
+        min-width: 0;
+      }
+      .template-title-row {
+        align-items: flex-start;
+      }
+      .template-title-row h3 {
+        min-width: 0;
+      }
+      .template-badge {
+        flex: 0 0 auto;
+      }
       .template-card-actions {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -70,6 +86,9 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
         margin-top: auto;
         padding-top: 4px;
         align-items: stretch;
+      }
+      .template-card-actions.is-narrow {
+        grid-template-columns: 1fr;
       }
       .template-card-actions .btn {
         width: 100% !important;
@@ -81,13 +100,23 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
         font-size: 11.5px;
         line-height: 1;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      @media (max-width: 720px) {
-        .template-card-actions {
-          grid-template-columns: 1fr;
+      .template-card-actions.is-narrow .btn {
+        height: 38px;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+      }
+      @media (max-width: 980px) {
+        .template-grid {
+          grid-template-columns: repeat(2, minmax(260px, 1fr)) !important;
         }
-        .template-card-actions .btn {
-          height: 38px;
+      }
+      @media (max-width: 640px) {
+        .template-grid {
+          grid-template-columns: 1fr !important;
         }
       }
     `;
@@ -116,5 +145,18 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
     actions.appendChild(previewLink);
     actions.appendChild(selectLink);
     card.appendChild(actions);
+
+    const syncCardActions = () => {
+      actions.classList.toggle('is-narrow', card.getBoundingClientRect().width < 350);
+    };
+
+    syncCardActions();
+
+    if ('ResizeObserver' in window) {
+      const observer = new ResizeObserver(syncCardActions);
+      observer.observe(card);
+    } else {
+      window.addEventListener('resize', syncCardActions);
+    }
   });
 }
