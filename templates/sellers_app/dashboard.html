@@ -9,22 +9,27 @@
     </div>
     <div class="stack-list">
       {% for store in stores %}
-        <div class="list-card block-card">
-          <div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <h4>{{ store.name }}</h4>
-              <span class="pill">{{ store.get_template_key_display }}</span>
+        <div class="list-card block-card store-card">
+          <div class="store-card-body">
+            <div class="store-card-topbar">
+              <div class="store-card-actions">
+                <a class="btn btn-outline btn-xs" href="{% url 'seller_store_change_design' store.id %}">Change Design</a>
+                <a class="btn btn-ghost btn-xs" href="{% url 'seller_store_edit' store.id %}">Edit</a>
+              </div>
+              <div class="store-card-statuses">
+                <span class="pill">{{ store.get_template_key_display }}</span>
+                {% if store.active %}<span class="pill">Active</span>{% else %}<span class="pill">Inactive</span>{% endif %}
+              </div>
             </div>
-            <p>
-              {% if store.market %}{{ store.market.name }}{% else %}No market selected{% endif %}
-              {% if store.stall_number %} · Stall {{ store.stall_number }}{% endif %}
-            </p>
-            <p>{{ store.products.count }} product{{ store.products.count|pluralize }}</p>
-          </div>
-          <div class="right-actions store-card-actions">
-            {% if store.active %}<span class="pill">Active</span>{% else %}<span class="pill">Inactive</span>{% endif %}
-            <a class="btn btn-outline btn-xs" href="{% url 'seller_store_change_design' store.id %}">Change Design</a>
-            <a class="btn btn-ghost btn-xs" href="{% url 'seller_store_edit' store.id %}">Edit</a>
+
+            <div class="store-card-content">
+              <h4>{{ store.name }}</h4>
+              <p>
+                {% if store.market %}{{ store.market.name }}{% else %}No market selected{% endif %}
+                {% if store.stall_number %} · Stall {{ store.stall_number }}{% endif %}
+              </p>
+              <p>{{ store.products.count }} product{{ store.products.count|pluralize }}</p>
+            </div>
           </div>
         </div>
       {% empty %}
