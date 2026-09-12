@@ -59,10 +59,23 @@ def validate_image_upload(file_obj):
 def _safe_name(filename):
     return filename.replace(' ', '_')
 
+
+def _seller_store_user_id(instance):
+    user_id = getattr(instance, 'user_id', None)
+    if user_id:
+        return user_id
+
+    seller = getattr(instance, 'seller', None)
+    if seller is not None:
+        return getattr(seller, 'user_id', None)
+
+    return None
+
+
 # path helpers ...
 def seller_product_image_path(instance, filename): return f"sellers/product_images/seller_{instance.seller_id or 'unknown'}/{_safe_name(filename)}"
 def seller_profile_image_path(instance, filename): return f"sellers/profile_images/user_{instance.user_id or 'unknown'}/{_safe_name(filename)}"
-def seller_store_image_path(instance, filename): return f"sellers/store_images/user_{instance.user_id or 'unknown'}/{_safe_name(filename)}"
+def seller_store_image_path(instance, filename): return f"sellers/store_images/user_{_seller_store_user_id(instance) or 'unknown'}/{_safe_name(filename)}"
 def buyer_profile_image_path(instance, filename): return f"buyers/profile_images/user_{instance.user_id or 'unknown'}/{_safe_name(filename)}"
 def driver_profile_image_path(instance, filename): return f"drivers/profile_images/user_{instance.user_id or 'unknown'}/{_safe_name(filename)}"
 def qa_profile_image_path(instance, filename): return f"qa/profile_images/user_{instance.user_id or 'unknown'}/{_safe_name(filename)}"
