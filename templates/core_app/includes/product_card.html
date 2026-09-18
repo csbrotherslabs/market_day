@@ -8,7 +8,7 @@
       <div class="md-seller-photo">{% if product.seller.seller_photo %}<img src="{{ product.seller.seller_photo.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}">{% elif product.seller.user.profile.profile_image %}<img src="{{ product.seller.user.profile.profile_image.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}">{% else %}<span>{{ product.seller.user.first_name|default:product.seller.user.username|slice:':1'|upper }}</span>{% endif %}</div>
       <div class="md-seller-copy">
         {% if product.store %}<a class="md-shop-link" href="{% url 'public_storefront' product.store.id %}">{{ product.store.name }} <i class="fa-solid fa-chevron-right"></i></a>{% else %}<strong>{{ product.seller.stall_name|default:product.seller.user.username }}</strong>{% endif %}
-        {% if product.store.market %}<span class="md-market"><i class="fa-solid fa-location-dot"></i> {{ product.store.market.name }}</span>{% endif %}
+        {% if product.store.market %}<a class="md-market md-market-link" href="{% url 'buyer_market_products' product.store.market.id %}" title="Shop {{ product.store.market.name }}"><i class="fa-solid fa-location-dot"></i> {{ product.store.market.name }}</a>{% endif %}
       </div>
       {% if product.seller.user.profile.is_verified %}<span class="md-verified" title="Verified seller"><i class="fa-solid fa-circle-check"></i></span>{% endif %}
       {% if product.seller.rating_avg %}<div class="md-rating"><i class="fa-solid fa-star"></i><strong>{{ product.seller.rating_avg }}</strong></div>{% endif %}
