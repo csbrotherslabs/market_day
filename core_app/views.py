@@ -229,10 +229,19 @@ def product_collection(request, collection):
         products = products.order_by('-available_qty', '-created_at')
     else:
         products = products.order_by('-created_at')
-    products, query, sort = _apply_product_filters(request, products)
+    collection_products_base = products
+    collection_product_count = collection_products_base.count()
+    collection_market_count = collection_products_base.values('store__market_id').distinct().count()
+    collection_store_count = collection_products_base.values('store_id').distinct().count()
+    collection_hero_product = collection_products_base.filter(image__isnull=False).order_by('-featured', '-created_at').first()
+    products, query, sort = _apply_product_filters(request, collection_products_base)
     title, subtitle = MARKETPLACE_COLLECTIONS[collection]
     return render(request, 'core_app/product_listing.html', {
         'page_title': title,
+        'collection_product_count': collection_product_count,
+        'collection_market_count': collection_market_count,
+        'collection_store_count': collection_store_count,
+        'collection_hero_product': collection_hero_product,
         'page_subtitle': subtitle,
         'products': products,
         'markets': Market.objects.filter(active=True).order_by('name'),
