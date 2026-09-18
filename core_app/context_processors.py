@@ -23,4 +23,6 @@ def global_ui_context(request):
             'current_latitude': profile.current_latitude or location['current_latitude'],
             'current_longitude': profile.current_longitude or location['current_longitude'],
         }
-    return {'global_markets': markets, **location}
+    cart = request.session.get('cart', {})
+    cart_count = sum(cart.values()) if cart else 0
+    return {'global_markets': markets, 'cart_count': cart_count, **location}
