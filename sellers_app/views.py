@@ -2,6 +2,7 @@ from decimal import Decimal, InvalidOperation
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
 from core_app.decorators import role_required
 from core_app.models import Category, Market, Order, Product, SellerProfile, SellerStore
 
@@ -312,8 +313,55 @@ def change_store_design(request, store_id):
 @role_required(['SELLER', 'SUPER_USER', 'ADMIN_STAFF'])
 def product_list(request):
     seller_profile = _get_seller_profile(request.user)
-    products = Product.objects.filter(seller=seller_profile).select_related('store', 'category')
-    return render(request, 'sellers_app/products.html', {'products': products})
+    base_products = Product.objects.filter(seller=seller_profile).select_related('store', 'store__market', 'category')
+    stores = SellerStore.objects.filter(seller=seller_profile).order_by('name')
+
+    query = request.GET.get('q', '').strip()
+    store_id = request.GET.get('store', '').strip()
+    status = request.GET.get('status', 'all')
+    sort = request.GET.get('sort', 'newest')
+
+    products = base_products
+    if query:
+        products = products.filter(
+            Q(name__icontains=query)
+            | Q(description__icontains=query)
+            | Q(store__name__icontains=query)
+            | Q(category__name__icontains=query)
+        )
+    if store_id.isdigit():
+        products = products.filter(store_id=int(store_id))
+    if status == 'active':
+        products = products.filter(active=True, available_qty__gt=0)
+    elif status == 'out':
+        products = products.filter(available_qty=0)
+    elif status == 'inactive':
+        products = products.filter(active=False)
+
+    if sort == 'name':
+        products = products.order_by('name')
+    elif sort == 'price-low':
+        products = products.order_by('price', '-created_at')
+    elif sort == 'price-high':
+        products = products.order_by('-price', '-created_at')
+    elif sort == 'stock-low':
+        products = products.order_by('available_qty', 'name')
+    else:
+        products = products.order_by('-created_at')
+
+    return render(request, 'sellers_app/products.html', {
+        'products': products,
+        'stores': stores,
+        'query': query,
+        'selected_store': store_id,
+        'status': status,
+        'sort': sort,
+        'result_count': products.count(),
+        'total_products': base_products.count(),
+        'active_products': base_products.filter(active=True, available_qty__gt=0).count(),
+        'out_of_stock_products': base_products.filter(available_qty=0).count(),
+        'inactive_products': base_products.filter(active=False).count(),
+    })
 
 
 @login_required
