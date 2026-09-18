@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -105,6 +105,105 @@ def home(request):
         'cart_count': sum(cart.values()) if cart else 0,
     }
     return render(request, 'core_app/home.html', context)
+
+
+MARKETPLACE_COLLECTIONS = {
+    'featured': ('Featured Products', 'Products selected for extra visibility on Market Day.'),
+    'deals': ("Today's Deals", 'Current products with seller discounts.'),
+    'fresh': ('Fresh From the Market', 'Recently listed products currently in stock.'),
+    'popular': ('Popular Near You', 'Well-stocked local products worth discovering.'),
+    'promoted': ('Promoted Products', 'Sponsored placements from Market Day sellers.'),
+    'wholesale': ('Wholesale & Bulk Deals', 'Larger quantities for traders, restaurants and businesses.'),
+    'made-in-ghana': ('Made in Ghana', 'Products from Ghanaian producers and businesses.'),
+    'new': ('New on Market Day', 'Recently added marketplace products.'),
+}
+
+
+def _marketplace_products(request):
+    products = Product.objects.filter(
+        active=True, available_qty__gt=0, store__active=True
+    ).select_related('seller', 'seller__user', 'store', 'store__market', 'category')
+    city = _get_user_city(request)
+    if city:
+        local = products.filter(store__market__city__iexact=city)
+        if local.exists():
+            products = local
+    return products
+
+
+def _apply_product_filters(request, products):
+    query = request.GET.get('q', '').strip()
+    market_id = request.GET.get('market', '').strip()
+    sort = request.GET.get('sort', 'recommended')
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) | Q(description__icontains=query) |
+            Q(store__name__icontains=query) | Q(store__market__name__icontains=query)
+        )
+    if market_id.isdigit():
+        products = products.filter(store__market_id=int(market_id))
+    if request.GET.get('deals') == '1':
+        products = products.filter(discount_price__isnull=False)
+    if request.GET.get('ghana') == '1':
+        products = products.filter(made_in_ghana=True)
+    if request.GET.get('wholesale') == '1':
+        products = products.filter(is_wholesale=True)
+    if sort == 'price-low':
+        products = products.order_by('price', '-created_at')
+    elif sort == 'price-high':
+        products = products.order_by('-price', '-created_at')
+    elif sort == 'newest':
+        products = products.order_by('-created_at')
+    else:
+        products = products.order_by('-featured', '-promoted', '-available_qty', '-created_at')
+    return products, query, sort
+
+
+def product_collection(request, collection):
+    if collection not in MARKETPLACE_COLLECTIONS:
+        raise Http404
+    products = _marketplace_products(request)
+    if collection == 'featured':
+        products = products.filter(featured=True)
+    elif collection == 'deals':
+        products = products.filter(discount_price__isnull=False)
+    elif collection == 'promoted':
+        products = products.filter(promoted=True)
+    elif collection == 'wholesale':
+        products = products.filter(is_wholesale=True)
+    elif collection == 'made-in-ghana':
+        products = products.filter(made_in_ghana=True)
+    elif collection == 'popular':
+        products = products.order_by('-available_qty', '-created_at')
+    else:
+        products = products.order_by('-created_at')
+    products, query, sort = _apply_product_filters(request, products)
+    title, subtitle = MARKETPLACE_COLLECTIONS[collection]
+    return render(request, 'core_app/product_listing.html', {
+        'page_title': title,
+        'page_subtitle': subtitle,
+        'products': products,
+        'markets': Market.objects.filter(active=True).order_by('name'),
+        'query': query,
+        'sort': sort,
+        'collection': collection,
+        'is_sponsored_collection': collection == 'promoted',
+    })
+
+
+def category_products(request, category_id):
+    category = get_object_or_404(Category, id=category_id, active=True)
+    products = _marketplace_products(request).filter(category=category)
+    products, query, sort = _apply_product_filters(request, products)
+    return render(request, 'core_app/product_listing.html', {
+        'page_title': category.name,
+        'page_subtitle': 'Browse available products in this category.',
+        'products': products,
+        'markets': Market.objects.filter(active=True).order_by('name'),
+        'query': query,
+        'sort': sort,
+        'category': category,
+    })
 
 
 def login_view(request):
