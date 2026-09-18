@@ -1,20 +1,51 @@
 {% extends 'base.html' %}
-{% block title %}Products{% endblock %}
+{% block title %}Products · Seller Account{% endblock %}
 {% block content %}
-<div class="card">
-  <div class="section-head"><h3>Products</h3><a class="btn btn-primary" href="{% url 'add_product' %}">Add product</a></div>
-  <div class="product-grid">
+<style>
+.seller-products{max-width:1500px;margin:0 auto}.sp-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:17px}.sp-eyebrow{display:flex;align-items:center;gap:7px;color:var(--btn-green);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.8px}.sp-head h1{margin:5px 0 5px;font-size:clamp(28px,4vw,42px);letter-spacing:-1.4px}.sp-head p{margin:0;color:var(--muted);font-size:12px}.sp-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}.sp-stat{padding:15px 16px;border:1px solid var(--border);border-radius:17px;background:var(--panel)}.sp-stat-icon{width:32px;height:32px;margin-bottom:10px;border-radius:10px;background:var(--btn-green-soft);color:var(--btn-green);display:grid;place-items:center}.sp-stat strong,.sp-stat span{display:block}.sp-stat strong{font-size:21px}.sp-stat span{margin-top:2px;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.55px}.sp-filter{display:grid;grid-template-columns:minmax(260px,1.5fr) minmax(160px,.7fr) minmax(140px,.6fr) minmax(160px,.7fr) auto;gap:9px;padding:14px;margin-bottom:17px;border:1px solid rgba(15,159,82,.13);border-radius:19px;background:linear-gradient(145deg,rgba(15,159,82,.05),var(--panel))}.sp-search{position:relative}.sp-search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted)}.sp-search input,.sp-filter select{width:100%;height:42px;padding:8px 11px;border:1px solid var(--border);border-radius:12px;background:var(--panel-strong);color:var(--text);font-size:11px}.sp-search input{padding-left:35px}.sp-filter .btn{height:42px}.sp-result-line{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.sp-result-line strong{font-size:12px}.sp-clear{font-size:10px;font-weight:800;color:var(--btn-green);text-decoration:none}.sp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.sp-card{overflow:hidden;border:1px solid var(--border);border-radius:20px;background:var(--panel);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.sp-card:hover{transform:translateY(-2px);border-color:rgba(15,159,82,.28);box-shadow:0 12px 28px rgba(15,23,42,.07)}.sp-media{position:relative;aspect-ratio:4/3;background:var(--btn-green-soft);overflow:hidden;display:grid;place-items:center;color:var(--muted);font-size:32px}.sp-media img{width:100%;height:100%;object-fit:cover}.sp-status{position:absolute;top:10px;left:10px;padding:5px 8px;border-radius:999px;background:#fff;color:#166534;font-size:9px;font-weight:900;box-shadow:0 3px 10px rgba(0,0,0,.08)}.sp-status.out{color:#b54708}.sp-status.inactive{color:#b42318}.sp-body{padding:13px}.sp-store{display:flex;align-items:center;gap:5px;margin-bottom:7px;color:var(--muted);font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-body h3{margin:0 0 5px;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-category{color:var(--muted);font-size:10px}.sp-price{display:flex;align-items:end;justify-content:space-between;gap:8px;margin:14px 0 11px}.sp-price strong{font-size:18px;color:var(--btn-green)}.sp-price span{font-size:9px;color:var(--muted)}.sp-inventory{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;margin-bottom:11px;border-radius:11px;background:var(--btn-green-soft);font-size:10px}.sp-inventory strong{font-size:11px}.sp-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.sp-actions .btn{min-height:37px;padding:7px 9px;font-size:10px}.sp-view{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:10px;font-weight:800;text-decoration:none}.sp-view:hover{border-color:rgba(15,159,82,.35);color:var(--btn-green)}.sp-empty{grid-column:1/-1;padding:65px 20px;border:1px dashed var(--border);border-radius:20px;background:var(--panel);text-align:center}.sp-empty i{display:block;margin-bottom:11px;font-size:30px;color:var(--btn-green)}.sp-empty h3{margin:0 0 5px}.sp-empty p{margin:0 0 14px;color:var(--muted);font-size:11px}
+@media(max-width:1100px){.sp-filter{grid-template-columns:1fr 1fr}.sp-filter .btn{width:100%}.sp-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.sp-head{align-items:flex-start;flex-direction:column}.sp-head .btn{width:100%}.sp-stats{grid-template-columns:1fr 1fr}.sp-filter{grid-template-columns:1fr}.sp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.sp-body{padding:10px}}
+@media(max-width:390px){.sp-grid{grid-template-columns:1fr}}
+</style>
+<div class="seller-products">
+  <header class="sp-head">
+    <div><span class="sp-eyebrow"><i class="fa-solid fa-box-open"></i> Seller inventory</span><h1>Products</h1><p>Manage the products customers see across your Market Day stores.</p></div>
+    <a class="btn btn-primary" href="{% url 'add_product' %}"><i class="fa-solid fa-plus"></i> Add product</a>
+  </header>
+
+  <section class="sp-stats">
+    <div class="sp-stat"><div class="sp-stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div><strong>{{ total_products }}</strong><span>Total products</span></div>
+    <div class="sp-stat"><div class="sp-stat-icon"><i class="fa-solid fa-circle-check"></i></div><strong>{{ active_products }}</strong><span>Active & in stock</span></div>
+    <div class="sp-stat"><div class="sp-stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><strong>{{ out_of_stock_products }}</strong><span>Out of stock</span></div>
+    <div class="sp-stat"><div class="sp-stat-icon"><i class="fa-solid fa-eye-slash"></i></div><strong>{{ inactive_products }}</strong><span>Inactive</span></div>
+  </section>
+
+  <form class="sp-filter" method="get">
+    <div class="sp-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" name="q" value="{{ query }}" placeholder="Search products, stores or categories..."></div>
+    <select name="store"><option value="">All stores</option>{% for store in stores %}<option value="{{ store.id }}" {% if selected_store == store.id|stringformat:'s' %}selected{% endif %}>{{ store.name }}</option>{% endfor %}</select>
+    <select name="status"><option value="all" {% if status == 'all' %}selected{% endif %}>All status</option><option value="active" {% if status == 'active' %}selected{% endif %}>Active</option><option value="out" {% if status == 'out' %}selected{% endif %}>Out of stock</option><option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option></select>
+    <select name="sort"><option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option><option value="name" {% if sort == 'name' %}selected{% endif %}>Product name</option><option value="price-low" {% if sort == 'price-low' %}selected{% endif %}>Price: low to high</option><option value="price-high" {% if sort == 'price-high' %}selected{% endif %}>Price: high to low</option><option value="stock-low" {% if sort == 'stock-low' %}selected{% endif %}>Lowest stock</option></select>
+    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter"></i> Apply</button>
+  </form>
+
+  <div class="sp-result-line"><strong>{{ result_count }} product{{ result_count|pluralize }}</strong>{% if query or selected_store or status != 'all' or sort != 'newest' %}<a class="sp-clear" href="{% url 'seller_products' %}"><i class="fa-solid fa-rotate-left"></i> Clear filters</a>{% endif %}</div>
+
+  <section class="sp-grid">
     {% for product in products %}
-      <div class="product-card">
-        <div class="product-thumb">📦</div>
-        <h4>{{ product.name }}</h4>
-        <p>{% if product.store %}{{ product.store.name }}{% else %}Unassigned store{% endif %}</p>
-        <p>{{ product.available_qty }} available · {{ product.unit }}</p>
-        <div class="price-row"><span>GHS {{ product.price }}</span><a class="text-link" href="{% url 'edit_product' product.id %}">Edit</a></div>
-      </div>
+      <article class="sp-card">
+        <div class="sp-media">{% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">{% else %}<i class="fa-solid fa-box-open"></i>{% endif %}{% if not product.active %}<span class="sp-status inactive">Inactive</span>{% elif product.available_qty == 0 %}<span class="sp-status out">Out of stock</span>{% else %}<span class="sp-status">Active</span>{% endif %}</div>
+        <div class="sp-body">
+          <div class="sp-store"><i class="fa-solid fa-store"></i> {% if product.store %}{{ product.store.name }}{% if product.store.market %} · {{ product.store.market.name }}{% endif %}{% else %}Unassigned store{% endif %}</div>
+          <h3>{{ product.name }}</h3>
+          <div class="sp-category">{% if product.category %}{{ product.category.name }}{% else %}Uncategorized{% endif %}</div>
+          <div class="sp-price"><strong>GHS {% if product.discount_percentage %}{{ product.discount_price }}{% else %}{{ product.price }}{% endif %}</strong><span>/ {{ product.unit }}</span></div>
+          <div class="sp-inventory"><span>Available inventory</span><strong>{{ product.available_qty }} {{ product.unit }}{{ product.available_qty|pluralize }}</strong></div>
+          <div class="sp-actions"><a class="btn btn-primary" href="{% url 'edit_product' product.id %}"><i class="fa-solid fa-pen"></i> Edit</a>{% if product.store %}<a class="sp-view" href="{% url 'public_storefront' product.store.id %}"><i class="fa-solid fa-arrow-up-right-from-square"></i> View shop</a>{% else %}<span class="sp-view">No shop</span>{% endif %}</div>
+        </div>
+      </article>
     {% empty %}
-      <div class="empty-state">No products yet.</div>
+      <div class="sp-empty"><i class="fa-solid fa-box-open"></i><h3>No products found</h3><p>{% if total_products %}Try changing or clearing your filters.{% else %}Add your first product to start selling on Market Day.{% endif %}</p>{% if not total_products %}<a class="btn btn-primary" href="{% url 'add_product' %}">Add your first product</a>{% endif %}</div>
     {% endfor %}
-  </div>
+  </section>
 </div>
 {% endblock %}
