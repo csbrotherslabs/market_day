@@ -326,3 +326,6 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
 .navbar-cart:hover{transform:translateY(-1px);border-color:rgba(15,159,82,.45);color:var(--btn-green)}
 .navbar-cart i{font-size:15px}.navbar-cart-count{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#e8a51a;color:#201500;border:2px solid var(--panel-strong);display:grid;place-items:center;font-size:9px;font-weight:900}
 @media(max-width:900px){.navbar-cart{display:inline-flex!important;width:40px;min-width:40px;height:40px;min-height:40px;padding:0;border-radius:12px}.navbar-cart-label{display:none}}
+
+/* Async cart feedback */
+.md-cart-button:disabled{cursor:wait;opacity:.86}.md-cart-button.is-added{background:linear-gradient(135deg,#087c42,#056b37)}.md-cart-button.is-error{background:#b42318}.cart-count-pop{animation:cartCountPop .28s ease}@keyframes cartCountPop{0%{transform:scale(.75)}65%{transform:scale(1.2)}100%{transform:scale(1)}}
