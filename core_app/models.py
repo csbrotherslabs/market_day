@@ -59,6 +59,11 @@ class QAProfile(models.Model):
 
 class Product(models.Model):
     seller=models.ForeignKey(SellerProfile,on_delete=models.CASCADE,related_name='products'); store=models.ForeignKey(SellerStore,on_delete=models.SET_NULL,blank=True,null=True,related_name='products'); category=models.ForeignKey(Category,on_delete=models.SET_NULL,blank=True,null=True); name=models.CharField(max_length=255); description=models.TextField(blank=True); price=models.DecimalField(max_digits=10, decimal_places=2); unit=models.CharField(max_length=50, default='piece'); available_qty=models.PositiveIntegerField(default=0); image=models.ImageField(upload_to=seller_product_image_path, blank=True, null=True); active=models.BooleanField(default=True); created_at=models.DateTimeField(auto_now_add=True)
+    discount_price=models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    featured=models.BooleanField(default=False)
+    promoted=models.BooleanField(default=False)
+    is_wholesale=models.BooleanField(default=False)
+    made_in_ghana=models.BooleanField(default=False)
 
 class Order(models.Model):
     STATUS_CHOICES=[('CREATED','Created'),('SELLER_CONFIRMED','Seller Confirmed'),('QA_PENDING','QA Pending'),('QA_APPROVED','QA Approved'),('QA_PARTIAL','QA Partial'),('QA_REJECTED','QA Rejected'),('DRIVER_PENDING_ASSIGNMENT','Driver Pending Assignment'),('DRIVER_ASSIGNED','Driver Assigned'),('OUT_FOR_DELIVERY','Out For Delivery'),('DELIVERED','Delivered'),('CANCELLED','Cancelled'),('DISPUTED','Disputed')]
