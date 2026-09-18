@@ -158,6 +158,9 @@ def _apply_product_filters(request, products):
         )
     if market_id.isdigit():
         products = products.filter(store__market_id=int(market_id))
+    category_id = request.GET.get('category', '').strip()
+    if category_id.isdigit():
+        products = products.filter(category_id=int(category_id))
     if request.GET.get('deals') == '1':
         products = products.filter(discount_price__isnull=False)
     if request.GET.get('ghana') == '1':
@@ -182,16 +185,28 @@ def public_storefront(request, store_id):
         active=True,
         seller__active=True,
     )
-    products = Product.objects.filter(
+    base_products = Product.objects.filter(
         store=store, active=True, available_qty__gt=0
-    ).select_related('seller', 'seller__user', 'store', 'store__market', 'category').order_by('-created_at')
-    products, query, sort = _apply_product_filters(request, products)
+    ).select_related('seller', 'seller__user', 'store', 'store__market', 'category')
+    categories = (
+        base_products.filter(category__isnull=False)
+        .values('category_id', 'category__name')
+        .distinct()
+        .order_by('category__name')
+    )
+    products, query, sort = _apply_product_filters(request, base_products)
     return render(request, 'core_app/public_storefront.html', {
         'store': store,
         'seller': store.seller,
         'products': products,
+        'categories': categories,
         'query': query,
         'sort': sort,
+        'selected_category': request.GET.get('category', '').strip(),
+        'deals': request.GET.get('deals') == '1',
+        'ghana': request.GET.get('ghana') == '1',
+        'wholesale': request.GET.get('wholesale') == '1',
+        'result_count': products.count(),
     })
 
 
