@@ -11,7 +11,7 @@
       </div>
       <div class="shop-product-body">
         <h3>{{ product.name }}</h3>
-        <div class="shop-product-store">{% if product.store %}{{ product.store.name }}{% else %}{{ product.seller.stall_name|default:product.seller.user.username }}{% endif %}{% if product.store.market %} · {{ product.store.market.name }}{% endif %}</div>
+        <div class="seller-mini"><div class="seller-mini-photo">{% if product.seller.seller_photo %}<img src="{{ product.seller.seller_photo.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}">{% else %}{{ product.seller.user.first_name|default:product.seller.user.username|slice:':1'|upper }}{% endif %}</div><div class="shop-product-store">{% if product.store %}<a class="seller-shop-link" href="{% url 'public_storefront' product.store.id %}">{{ product.store.name }}</a>{% else %}{{ product.seller.stall_name|default:product.seller.user.username }}{% endif %}{% if product.store.market %} · {{ product.store.market.name }}{% endif %}</div></div>
         <div class="shop-price">
           <strong>GHS {% if product.discount_price %}{{ product.discount_price }}{% else %}{{ product.price }}{% endif %}</strong>
           {% if product.discount_price %}<del>GHS {{ product.price }}</del>{% else %}<span>/ {{ product.unit }}</span>{% endif %}
