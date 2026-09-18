@@ -14,14 +14,16 @@
       {% if product.seller.rating_avg %}<div class="md-rating"><i class="fa-solid fa-star"></i><strong>{{ product.seller.rating_avg }}</strong></div>{% endif %}
     </div>
     <h3 class="md-product-name">{{ product.name }}</h3>
-    {% if product.description %}<p class="md-product-description">{{ product.description|truncatechars:76 }}</p>{% endif %}
+    <p class="md-product-description">{% if product.description %}{{ product.description|truncatechars:96 }}{% elif product.category %}Fresh {{ product.name|lower }} from {{ product.store.name|default:product.seller.stall_name|default:"a trusted local seller" }}, selected for quality and everyday value.{% else %}Quality {{ product.name|lower }} from {{ product.store.name|default:product.seller.stall_name|default:"a trusted Market Day seller" }}.{% endif %}</p>
     <div class="md-price-row">
       <div class="md-price-group"><strong>GHS {% if product.discount_percentage %}{{ product.discount_price }}{% else %}{{ product.price }}{% endif %}</strong>{% if product.discount_percentage %}<del>GHS {{ product.price }}</del><span class="md-discount">{{ product.discount_percentage }}% OFF</span>{% endif %}</div>
       <span class="md-unit">/ {{ product.unit }}</span>
     </div>
     <div class="md-product-tags">
+      <span class="md-tag"><i class="fa-solid fa-circle-check"></i> In stock</span>
       {% if product.made_in_ghana %}<span class="md-tag ghana"><span class="md-ghana-flag">★</span> Made in Ghana</span>{% endif %}
       {% if product.is_wholesale %}<span class="md-tag"><i class="fa-solid fa-boxes-stacked"></i> Wholesale</span>{% endif %}
+      {% if product.store.market %}<span class="md-tag"><i class="fa-solid fa-shop"></i> Local market</span>{% endif %}
     </div>
     {% if user.is_authenticated %}<form method="post" action="{% url 'add_to_cart' product.id %}" class="md-cart-form">{% csrf_token %}<input type="hidden" name="qty" value="1"><button class="md-cart-button" type="submit"><i class="fa-solid fa-cart-shopping"></i><span>Add to cart</span></button></form>{% else %}<a class="md-cart-button" href="{% url 'login' %}"><i class="fa-solid fa-cart-shopping"></i><span>Sign in to buy</span></a>{% endif %}
   </div>
