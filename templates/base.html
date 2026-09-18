@@ -10,7 +10,8 @@
 </head>
 <body>
   <div class="app-shell" id="appShell">
-    <aside class="sidebar">
+    <aside class="sidebar" id="mobileSidebar" aria-label="Marketplace navigation">
+      <button type="button" class="mobile-sidebar-close" id="mobileSidebarClose" aria-label="Close navigation"><i class="fa-solid fa-xmark"></i></button>
       <div class="brand">
         <div class="brand-badge">M</div>
         <div class="brand-copy">
@@ -112,6 +113,7 @@
   </div>
 
 
+  <div class="mobile-sidebar-backdrop hidden" id="mobileSidebarBackdrop" aria-hidden="true"></div>
   <div class="account-drawer-backdrop hidden" id="accountDrawerBackdrop" aria-hidden="true"></div>\n\n  <div id='locationModal' class='location-modal hidden'>
     <div class='location-card'>
       <button id='closeLocationModal' class='btn btn-pill btn-secondary btn-sm'>Close</button>
