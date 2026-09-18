@@ -251,8 +251,11 @@ def profile_view(request):
             messages.error(request, err)
             return redirect('profile')
         if image: profile.profile_image = image
-        profile.save(); messages.success(request, 'Profile updated successfully.'); return redirect('profile')
-    return render(request, 'core_app/profile.html', {'profile': profile})
+        profile.save(); messages.success(request, 'Account information updated successfully.'); return redirect('/profile/?view=settings')
+    return render(request, 'core_app/profile.html', {
+        'profile': profile,
+        'settings_view': request.GET.get('view') == 'settings',
+    })
 
 
 def market_detail(request, market_id):
