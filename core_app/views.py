@@ -32,17 +32,8 @@ def _get_user_city(request):
 
 
 def _redirect_authenticated_user(user):
-    role = getattr(user.profile, 'role', '') if hasattr(user, 'profile') else ''
-    if role == 'BUYER':
-        return redirect('buyer_dashboard')
-    if role == 'SELLER':
-        return redirect('seller_dashboard')
-    if role == 'DRIVER':
-        return redirect('driver_dashboard')
-    if role == 'QA':
-        return redirect('qa_dashboard')
-    if role == 'ADMIN_STAFF' or user.is_staff or user.is_superuser:
-        return redirect('admin_dashboard')
+    # The marketplace is the common landing page for every authenticated role.
+    # Role-specific workspaces remain available from account/navigation menus.
     return redirect('home')
 
 
