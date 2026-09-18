@@ -274,3 +274,25 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
 
 /* Keep uploaded profile photos contained in every navbar/account avatar. */
 .avatar img,.account-panel-avatar img{width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit}
+
+/* Premium Market Day product card */
+.md-product-card{min-width:0;overflow:hidden;border:1px solid var(--border);border-radius:22px;background:var(--panel);box-shadow:0 8px 26px rgba(18,45,30,.07);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.md-product-card:hover{transform:translateY(-2px);border-color:rgba(15,159,82,.24);box-shadow:0 14px 34px rgba(18,45,30,.11)}
+.md-product-media{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--btn-green-soft)}
+.md-product-media>img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .35s ease}.md-product-card:hover .md-product-media>img{transform:scale(1.025)}
+.md-product-placeholder{width:100%;height:100%;display:grid;place-items:center;color:var(--muted);font-size:28px}
+.md-fresh-badge,.md-sponsored-badge{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.md-fresh-badge{background:#079447;color:#fff}.md-sponsored-badge{background:rgba(255,255,255,.94);color:#344054}
+.md-product-content{padding:13px;display:flex;flex-direction:column;min-height:250px}
+.md-seller-row{display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:11px}
+.md-seller-photo{width:38px;height:38px;min-width:38px;border-radius:50%;overflow:hidden;background:var(--btn-green-soft);display:grid;place-items:center;color:var(--btn-green);font-size:12px;font-weight:900;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--border)}
+.md-seller-photo img{width:100%;height:100%;object-fit:cover}.md-seller-copy{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}
+.md-shop-link{display:block;color:var(--text);font-size:11px;font-weight:850;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.md-shop-link i{font-size:8px;margin-left:2px;color:var(--muted)}.md-shop-link:hover{color:var(--btn-green)}
+.md-market{display:block;color:var(--muted);font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.md-market i{margin-right:2px}
+.md-verified{color:#079447;font-size:15px;line-height:1}.md-rating{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text)}.md-rating i{color:#f5ad00}
+.md-product-name{margin:0 0 4px!important;font-size:15px!important;line-height:1.25;color:var(--text)}
+.md-product-description{margin:0 0 11px;color:var(--muted);font-size:10px;line-height:1.4;min-height:28px}
+.md-price-row{display:flex;align-items:end;justify-content:space-between;gap:7px;margin-top:auto;margin-bottom:10px}.md-price-group{display:flex;align-items:baseline;gap:6px;min-width:0;flex-wrap:wrap}.md-price-group strong{font-size:18px;color:var(--text);letter-spacing:-.3px}.md-price-group del{font-size:9px;color:var(--muted)}.md-unit{font-size:9px;color:var(--muted);white-space:nowrap}
+.md-product-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}.md-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 7px;border-radius:999px;background:var(--btn-green-soft);color:var(--text);font-size:8px;font-weight:750}.md-tag.ghana{background:rgba(245,181,38,.12)}.md-ghana-flag{width:15px;height:11px;border-radius:2px;background:linear-gradient(#ce1126 0 33%,#fcd116 33% 66%,#006b3f 66%);color:#111;display:grid;place-items:center;font-size:6px}
+.md-cart-form{margin:0}.md-cart-button{width:100%;min-height:38px;border:0;border-radius:11px;background:linear-gradient(135deg,#0a9950,#087c42);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-size:11px;font-weight:850;text-decoration:none;cursor:pointer;box-shadow:0 6px 14px rgba(8,124,66,.18);transition:transform .16s ease,box-shadow .16s ease}.md-cart-button:hover{transform:translateY(-1px);box-shadow:0 9px 18px rgba(8,124,66,.25)}.md-cart-button i{font-size:13px}
+@media(max-width:700px){.md-product-card{border-radius:17px}.md-product-content{padding:10px;min-height:235px}.md-seller-photo{width:32px;height:32px;min-width:32px}.md-rating{display:none}.md-product-name{font-size:14px!important}.md-product-description{font-size:9px}.md-price-group strong{font-size:16px}.md-product-tags{gap:4px}.md-tag{font-size:7px;padding:4px 6px}.md-cart-button{min-height:36px}}
