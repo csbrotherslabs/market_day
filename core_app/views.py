@@ -245,12 +245,20 @@ def product_collection(request, collection):
 
 def category_products(request, category_id):
     category = get_object_or_404(Category, id=category_id, active=True)
-    products = _marketplace_products(request).filter(category=category)
-    products, query, sort = _apply_product_filters(request, products)
+    category_products_base = _marketplace_products(request).filter(category=category)
+    category_product_count = category_products_base.count()
+    category_market_count = category_products_base.values('store__market_id').distinct().count()
+    category_store_count = category_products_base.values('store_id').distinct().count()
+    category_hero_product = category_products_base.filter(image__isnull=False).order_by('-featured', '-created_at').first()
+    products, query, sort = _apply_product_filters(request, category_products_base)
     return render(request, 'core_app/product_listing.html', {
         'page_title': category.name,
         'page_subtitle': 'Browse available products in this category.',
         'products': products,
+        'category_product_count': category_product_count,
+        'category_market_count': category_market_count,
+        'category_store_count': category_store_count,
+        'category_hero_product': category_hero_product,
         'markets': Market.objects.filter(active=True).order_by('name'),
         'query': query,
         'sort': sort,
