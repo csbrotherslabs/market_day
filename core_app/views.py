@@ -77,6 +77,20 @@ def home(request):
         featured_stores = featured_stores.filter(market__in=markets)
 
     featured_products = local_products.filter(featured=True)[:8]
+
+    # Rotate the top homepage experience without randomness: the standard Market Day
+    # hero appears on one visit, then a featured-product spotlight on the next.
+    # The spotlight itself cycles through eligible featured products.
+    hero_visit = request.session.get('marketplace_hero_visit', 0)
+    featured_hero_candidates = list(local_products.filter(featured=True, image__isnull=False)[:8])
+    featured_hero_product = None
+    show_featured_hero = bool(featured_hero_candidates) and hero_visit % 2 == 1
+    if show_featured_hero:
+        spotlight_index = (hero_visit // 2) % len(featured_hero_candidates)
+        featured_hero_product = featured_hero_candidates[spotlight_index]
+    request.session['marketplace_hero_visit'] = hero_visit + 1
+    request.session.modified = True
+
     discounted_products = local_products.filter(discount_price__isnull=False)[:8]
     promoted_products = local_products.filter(promoted=True)[:8]
     wholesale_products = local_products.filter(is_wholesale=True)[:8]
@@ -92,6 +106,8 @@ def home(request):
         'markets': markets[:8],
         'categories': categories,
         'featured_products': featured_products,
+        'show_featured_hero': show_featured_hero,
+        'featured_hero_product': featured_hero_product,
         'discounted_products': discounted_products,
         'fresh_products': local_products[:8],
         'popular_products': popular_products,
