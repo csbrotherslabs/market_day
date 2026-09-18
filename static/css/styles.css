@@ -271,3 +271,6 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
   .sidebar{box-shadow:none}
   .sidebar.mobile-open{box-shadow:24px 0 60px rgba(0,0,0,.38)}
 }
+
+/* Keep uploaded profile photos contained in every navbar/account avatar. */
+.avatar img,.account-panel-avatar img{width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit}
