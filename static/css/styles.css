@@ -320,3 +320,9 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
 .md-tag i.fa-circle-check{color:#079447}
 @media(max-width:1100px) and (min-width:701px){.md-product-description{height:31px!important;min-height:31px!important;max-height:31px!important}.md-product-tags{min-height:27px!important}}
 @media(max-width:700px){.md-product-name{min-height:18px}.md-product-description{height:26px!important;min-height:26px!important;max-height:26px!important}.md-price-row{min-height:25px!important}.md-product-tags{min-height:24px!important}}
+
+/* Marketplace navbar cart */
+.navbar-cart{position:relative;min-height:42px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid rgba(15,159,82,.2);border-radius:13px;background:var(--btn-green-soft);color:var(--text);text-decoration:none;font-size:12px;font-weight:800;transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.navbar-cart:hover{transform:translateY(-1px);border-color:rgba(15,159,82,.45);color:var(--btn-green)}
+.navbar-cart i{font-size:15px}.navbar-cart-count{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#e8a51a;color:#201500;border:2px solid var(--panel-strong);display:grid;place-items:center;font-size:9px;font-weight:900}
+@media(max-width:900px){.navbar-cart{display:inline-flex!important;width:40px;min-width:40px;height:40px;min-height:40px;padding:0;border-radius:12px}.navbar-cart-label{display:none}}
