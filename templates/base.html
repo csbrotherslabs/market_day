@@ -66,9 +66,43 @@
             </button>
             <div class="profile-menu hidden" id="profileMenu" role="menu" aria-labelledby="profileMenuToggle">
               {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}" role="menuitem">Account</a>
+                <a href="{% url 'profile' %}" role="menuitem">My Account</a>
                 <a href="{% url 'profile' %}#account-settings" role="menuitem">Account Settings</a>
-                <a href="{% url 'logout' %}" role="menuitem">Logout</a>
+
+                {% if user.profile.role == 'BUYER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
+                  <div class="menu-title">Shopping</div>
+                  <a href="{% url 'buyer_orders' %}" role="menuitem">My Orders</a>
+                  <a href="{% url 'buyer_cart' %}" role="menuitem">Cart</a>
+                {% endif %}
+
+                {% if user.profile.role == 'SELLER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
+                  <div class="menu-title">Selling</div>
+                  <a href="{% url 'seller_dashboard' %}" role="menuitem">Seller Dashboard</a>
+                  <a href="{% url 'seller_products' %}" role="menuitem">Products &amp; Inventory</a>
+                  <a href="{% url 'seller_orders' %}" role="menuitem">Seller Orders</a>
+                  <a href="{% url 'seller_store_setup' %}" role="menuitem">Add Store</a>
+                {% endif %}
+
+                {% if user.profile.role == 'DRIVER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
+                  <div class="menu-title">Transport</div>
+                  <a href="{% url 'driver_dashboard' %}" role="menuitem">Load Board &amp; Assignments</a>
+                  <a href="{% url 'driver_profile_setup' %}" role="menuitem">Driver Profile</a>
+                {% endif %}
+
+                {% if user.profile.role == 'QA' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
+                  <div class="menu-title">Quality Assurance</div>
+                  <a href="{% url 'qa_dashboard' %}" role="menuitem">Assigned Orders &amp; Inspection Queue</a>
+                {% endif %}
+
+                {% if user.profile.role == 'ADMIN_STAFF' %}
+                  <div class="menu-title">Administration</div>
+                  <a href="{% url 'admin_dashboard' %}" role="menuitem">Admin Operations</a>
+                  <a href="{% url 'admin_order_list' %}" role="menuitem">All Orders</a>
+                  <a href="{% url 'admin_disputes' %}" role="menuitem">Disputes</a>
+                  <a href="{% url 'admin_user_list' %}" role="menuitem">Users</a>
+                {% endif %}
+
+                <a href="{% url 'logout' %}" role="menuitem">Sign Out</a>
               {% else %}
                 <a href="{% url 'login' %}" role="menuitem">Sign in</a>
                 <a href="{% url 'register' %}" role="menuitem">Create account</a>
