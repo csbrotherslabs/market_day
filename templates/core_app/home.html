@@ -1,237 +1,79 @@
 {% extends 'base.html' %}
-{% block title %}Market Day{% endblock %}
+{% block title %}Market Day · Shop Ghana's Markets{% endblock %}
 {% block content %}
 <style>
-  .role-home { display:grid; gap:18px; }
-  .role-welcome {
-    display:flex; align-items:flex-start; justify-content:space-between; gap:18px;
-    padding:22px; border:1px solid #e4e9e5; border-radius:20px; background:#fff;
-  }
-  .role-welcome h2 { margin:0 0 6px; font-size:28px; color:#10203a; }
-  .role-welcome p { margin:0; color:#667085; }
-  .role-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
-  .role-kpi { padding:17px; border:1px solid #e7ece8; border-radius:18px; background:#fff; }
-  .role-kpi span { display:block; color:#667085; font-size:12px; margin-bottom:7px; }
-  .role-kpi strong { display:block; color:#10203a; font-size:24px; line-height:1; }
-  .role-kpi small { display:block; margin-top:7px; color:#7c8c82; }
-  .role-section-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:18px; }
-  .role-section { padding:20px; border:1px solid #e4e9e5; border-radius:20px; background:#fff; min-width:0; }
-  .role-section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
-  .role-section-head h3 { margin:0; color:#10203a; font-size:17px; }
-  .role-list { display:grid; gap:10px; }
-  .role-list-item { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px; border:1px solid #edf0ee; border-radius:14px; text-decoration:none; color:inherit; }
-  .role-list-item:hover { border-color:#cfd8d2; }
-  .role-list-item h4 { margin:0 0 3px; font-size:14px; color:#10203a; }
-  .role-list-item p { margin:0; font-size:12px; color:#667085; }
-  .role-list-item .pill { flex:0 0 auto; }
-  .role-actions { display:flex; flex-wrap:wrap; gap:9px; }
-  .attention-card { border-left:4px solid #f59e0b; }
-  .store-home-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-  .store-home-card { overflow:hidden; min-width:0; border:1px solid #e7ece8; border-radius:16px; background:#fff; }
-  .store-home-image { aspect-ratio:16/7; background:#eef4ef; display:flex; align-items:center; justify-content:center; color:#7c8c82; font-size:12px; }
-  .store-home-image img { width:100%; height:100%; object-fit:cover; display:block; }
-  .store-home-body { padding:13px; }
-  .store-home-body h4 { margin:0 0 4px; color:#10203a; }
-  .store-home-body p { margin:0; color:#667085; font-size:12px; }
-  .product-mini-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
-  .product-mini { padding:12px; border:1px solid #edf0ee; border-radius:14px; min-width:0; }
-  .product-mini strong { display:block; color:#10203a; font-size:13px; overflow-wrap:anywhere; }
-  .product-mini span { display:block; margin-top:5px; color:#667085; font-size:12px; }
-  @media (max-width:1050px) {
-    .role-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .role-section-grid { grid-template-columns:1fr; }
-  }
-  @media (max-width:700px) {
-    .role-welcome { flex-direction:column; }
-    .role-welcome h2 { font-size:23px; }
-    .role-kpis { grid-template-columns:1fr 1fr; }
-    .store-home-grid { grid-template-columns:1fr; }
-    .product-mini-grid { grid-template-columns:1fr 1fr; }
-  }
-  @media (max-width:430px) {
-    .role-kpis, .product-mini-grid { grid-template-columns:1fr; }
-  }
+.marketplace{max-width:1500px;margin:0 auto;display:grid;gap:26px}.market-hero{position:relative;overflow:hidden;min-height:360px;padding:48px;border-radius:28px;background:linear-gradient(115deg,#0b512d,#14884b 58%,#e8a51a);color:#fff;display:flex;align-items:center}.market-hero:after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-80px;top:-120px;background:rgba(255,255,255,.1)}.market-hero-copy{position:relative;z-index:1;max-width:690px}.market-hero .eyebrow{color:#fff;border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.12)}.market-hero h1{font-size:clamp(38px,6vw,70px);line-height:.98;letter-spacing:-2.8px;margin:16px 0}.market-hero p{max-width:600px;font-size:16px;line-height:1.65;color:rgba(255,255,255,.86)}.market-hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.market-hero .btn-primary{background:#fff;color:#11633a;box-shadow:none}.market-hero .btn-secondary{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.28)}.market-section{min-width:0}.market-section-head{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:14px}.market-section-head h2{margin:0;font-size:25px;letter-spacing:-.5px}.market-section-head p{margin:5px 0 0;color:var(--muted);font-size:13px}.market-link{color:var(--btn-green);font-size:13px;font-weight:700}.market-card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.market-card{display:block;overflow:hidden;border:1px solid var(--border);border-radius:20px;background:var(--panel);transition:transform .18s ease,border-color .18s ease}.market-card:hover,.shop-product:hover,.store-tile:hover{transform:translateY(-2px);border-color:rgba(15,159,82,.38)}.market-card-visual{height:116px;background:linear-gradient(135deg,rgba(15,159,82,.2),rgba(232,165,26,.16));display:flex;align-items:center;justify-content:center;font-size:35px}.market-card-body{padding:14px}.market-card-body h3{font-size:15px;margin:0 0 5px}.market-card-body p{font-size:12px;color:var(--muted);margin:0}.category-row{display:grid;grid-template-columns:repeat(8,minmax(100px,1fr));gap:10px;overflow-x:auto;padding-bottom:4px}.category-chip{min-width:105px;padding:16px 10px;border:1px solid var(--border);border-radius:18px;background:var(--panel);text-align:center}.category-icon{width:44px;height:44px;margin:0 auto 9px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--btn-green-soft);color:var(--btn-green);font-size:18px}.category-chip strong{display:block;font-size:12px}.shop-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.shop-product{min-width:0;overflow:hidden;border:1px solid var(--border);border-radius:20px;background:var(--panel);transition:transform .18s ease,border-color .18s ease}.shop-product-image{aspect-ratio:4/3;background:linear-gradient(135deg,var(--btn-green-soft),rgba(232,165,26,.1));display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;overflow:hidden}.shop-product-image img{width:100%;height:100%;object-fit:cover}.shop-product-body{padding:14px}.shop-product-body h3{margin:0 0 5px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shop-product-store{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shop-price{display:flex;align-items:end;justify-content:space-between;gap:8px;margin-top:13px}.shop-price strong{font-size:17px}.shop-price span{font-size:11px;color:var(--muted)}.shop-product-actions{display:flex;gap:7px;margin-top:12px}.shop-product-actions .btn{flex:1}.store-grid-market{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.store-tile{overflow:hidden;border:1px solid var(--border);border-radius:20px;background:var(--panel);transition:transform .18s ease,border-color .18s ease}.store-tile-image{height:150px;background:var(--btn-green-soft);overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}.store-tile-image img{width:100%;height:100%;object-fit:cover}.store-tile-body{padding:14px}.store-tile-body h3{margin:0 0 5px;font-size:15px}.store-tile-body p{margin:0;color:var(--muted);font-size:12px}.market-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:22px;border:1px solid var(--border);border-radius:24px;background:var(--panel)}.trust-item{display:flex;gap:12px;align-items:center}.trust-icon{width:42px;height:42px;min-width:42px;border-radius:14px;background:var(--btn-green-soft);display:flex;align-items:center;justify-content:center;color:var(--btn-green)}.trust-item strong{display:block;font-size:13px}.trust-item span{display:block;color:var(--muted);font-size:11px;margin-top:3px}@media(max-width:1100px){.market-card-grid,.shop-grid{grid-template-columns:repeat(3,1fr)}.category-row{grid-template-columns:repeat(4,minmax(120px,1fr))}.store-grid-market{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.marketplace{gap:22px}.market-hero{min-height:320px;padding:30px 22px}.market-hero h1{letter-spacing:-1.8px}.market-card-grid,.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.store-grid-market{grid-template-columns:1fr}.market-trust{grid-template-columns:1fr}.category-row{display:flex}.category-chip{flex:0 0 112px}.market-section-head h2{font-size:21px}}@media(max-width:440px){.market-card-grid{grid-template-columns:1fr}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.shop-product-body{padding:11px}.shop-product-actions{display:block}.shop-product-actions .btn{width:100%}.market-hero-actions .btn{width:100%}}
 </style>
 
-{% if not user.is_authenticated %}
-<section class="hero-grid">
-  <div class="card hero-card">
-    <div class="eyebrow">Next-generation market commerce</div>
-    <h2>Buy from local sellers, verify quality, and dispatch faster with a futuristic operations stack.</h2>
-    <p>Market Day is designed for buyers, sellers, QA analysts, drivers, and admins in one clean workflow.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="{% url 'register' %}">Create account</a>
-      <a class="btn btn-secondary" href="{% url 'login' %}">Sign in</a>
+<div class="marketplace">
+  <section class="market-hero">
+    <div class="market-hero-copy">
+      <span class="eyebrow">{% if selected_city %}Shopping near {{ selected_city }}{% else %}Ghana's local marketplace{% endif %}</span>
+      <h1>Shop Ghana's markets from wherever you are.</h1>
+      <p>Discover fresh food, everyday essentials, trusted local sellers and products from real markets — with quality checks and delivery built into Market Day.</p>
+      <div class="market-hero-actions">
+        {% if markets %}<a class="btn btn-primary" href="#products">Start shopping</a><a class="btn btn-secondary" href="#markets">Explore markets</a>{% endif %}
+        {% if not user.is_authenticated %}<a class="btn btn-secondary" href="{% url 'register' %}">Create account</a>{% endif %}
+      </div>
     </div>
-  </div>
-  <div class="card">
-    <div class="section-head"><h3>Platform overview</h3><span class="pill">Live</span></div>
-    <div class="stats-grid">
-      <div class="metric"><div class="label">Markets</div><div class="value">{{ stats.markets }}</div><div class="delta">Growing local reach</div></div>
-      <div class="metric"><div class="label">Products</div><div class="value">{{ stats.products }}</div><div class="delta">Ready to shop</div></div>
-      <div class="metric"><div class="label">Sellers</div><div class="value">{{ stats.sellers }}</div><div class="delta">Verified stores</div></div>
-      <div class="metric"><div class="label">Avg delivery</div><div class="value">{{ stats.avg_delivery }}</div><div class="delta">Fast urban delivery</div></div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="two-col-grid">
-  <div class="card">
-    <div class="section-head"><h3>Featured markets</h3><span class="pill">Explore</span></div>
-    <div class="stack-list">
+  <section class="market-trust">
+    <div class="trust-item"><div class="trust-icon"><i class="fa-solid fa-store"></i></div><div><strong>Real local markets</strong><span>Shop sellers rooted in Ghana's market communities.</span></div></div>
+    <div class="trust-item"><div class="trust-icon"><i class="fa-solid fa-clipboard-check"></i></div><div><strong>Quality workflow</strong><span>Orders can move through Market Day quality assurance.</span></div></div>
+    <div class="trust-item"><div class="trust-icon"><i class="fa-solid fa-truck-fast"></i></div><div><strong>Built for delivery</strong><span>From market pickup to your delivery address.</span></div></div>
+  </section>
+
+  <section class="market-section" id="markets">
+    <div class="market-section-head"><div><h2>{% if selected_city and not no_city_match %}Markets near you{% else %}Explore markets{% endif %}</h2><p>Start with a physical market, then shop across its sellers.</p></div></div>
+    <div class="market-card-grid">
       {% for market in markets %}
-      <a class="list-card" href="{% url 'buyer_market_products' market.id %}">
-        <div><h4>{{ market.name }}</h4><p>{{ market.city }}, {{ market.region }}</p></div>
-        <span class="pill">Open</span>
+      <a class="market-card" href="{% url 'buyer_market_products' market.id %}">
+        <div class="market-card-visual"><i class="fa-solid fa-shop"></i></div>
+        <div class="market-card-body"><h3>{{ market.name }}</h3><p>{{ market.city }}{% if market.region %}, {{ market.region }}{% endif %}</p></div>
       </a>
-      {% empty %}<div class="empty-state">No markets yet.</div>{% endfor %}
+      {% empty %}<div class="empty-state">Markets are being added to Market Day.</div>{% endfor %}
     </div>
-  </div>
-  <div class="card">
-    <div class="section-head"><h3>Popular products</h3><span class="pill">Hot</span></div>
-    <div class="product-grid compact-grid">
-      {% for product in products %}
-      <div class="product-card">
-        <div class="product-thumb">🛒</div>
-        <h4>{{ product.name }}</h4>
-        <p>{{ product.seller.stall_name|default:product.seller.user.username }}</p>
-        <div class="price-row"><span>GHS {{ product.price }}</span><small>/ {{ product.unit }}</small></div>
-      </div>
-      {% empty %}<div class="empty-state">No products loaded yet.</div>{% endfor %}
+  </section>
+
+  {% if categories %}
+  <section class="market-section">
+    <div class="market-section-head"><div><h2>Shop by category</h2><p>Find what you need across active Market Day sellers.</p></div></div>
+    <div class="category-row">{% for category in categories %}<div class="category-chip"><div class="category-icon"><i class="fa-solid fa-basket-shopping"></i></div><strong>{{ category.name }}</strong></div>{% endfor %}</div>
+  </section>
+  {% endif %}
+
+  <section class="market-section" id="products">
+    <div class="market-section-head"><div><h2>{% if selected_city and not no_city_match %}Fresh from markets near you{% else %}Fresh from the market{% endif %}</h2><p>Available products from active stores.</p></div>{% if user.is_authenticated %}<a class="market-link" href="{% url 'buyer_cart' %}">Cart{% if cart_count %} · {{ cart_count }}{% endif %}</a>{% endif %}</div>
+    <div class="shop-grid">
+      {% for product in fresh_products %}
+      <article class="shop-product">
+        <div class="shop-product-image">{% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">{% else %}<i class="fa-solid fa-basket-shopping fa-2x"></i>{% endif %}</div>
+        <div class="shop-product-body">
+          <h3>{{ product.name }}</h3>
+          <div class="shop-product-store">{% if product.store %}{{ product.store.name }}{% else %}{{ product.seller.stall_name|default:product.seller.user.username }}{% endif %}{% if product.store.market %} · {{ product.store.market.name }}{% endif %}</div>
+          <div class="shop-price"><strong>GHS {{ product.price }}</strong><span>/ {{ product.unit }}</span></div>
+          <div class="shop-product-actions">
+            {% if user.is_authenticated %}<a class="btn btn-primary btn-sm" href="{% url 'add_to_cart' product.id %}">Add to cart</a>{% else %}<a class="btn btn-primary btn-sm" href="{% url 'login' %}">Sign in to buy</a>{% endif %}
+          </div>
+        </div>
+      </article>
+      {% empty %}<div class="empty-state">No products are available in this area yet.</div>{% endfor %}
     </div>
-  </div>
-</section>
-{% else %}
+  </section>
 
-<div class="role-home">
-  {% if home_role == 'SELLER' %}
-    <section class="role-welcome">
-      <div><div class="eyebrow">Seller home</div><h2>Welcome back, {{ welcome_name }}.</h2><p>Here is what needs your attention across your stores today.</p></div>
-      <div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'add_product' %}">Add product</a><a class="btn btn-secondary btn-sm" href="{% url 'seller_dashboard' %}">Full dashboard</a></div>
-    </section>
-    <section class="role-kpis">
-      <div class="role-kpi"><span>New orders</span><strong>{{ seller_new_orders }}</strong><small>Waiting for seller action</small></div>
-      <div class="role-kpi"><span>Sales today</span><strong>GHS {{ seller_sales_today|floatformat:2 }}</strong><small>Across your order items</small></div>
-      <div class="role-kpi"><span>Low stock</span><strong>{{ seller_low_stock_count }}</strong><small>5 units or fewer</small></div>
-      <div class="role-kpi"><span>Awaiting QA</span><strong>{{ seller_qa_pending }}</strong><small>In the quality workflow</small></div>
-    </section>
-    <section class="role-section-grid">
-      <div class="role-section attention-card">
-        <div class="role-section-head"><h3>Needs your attention</h3><a class="btn btn-ghost btn-sm" href="{% url 'seller_orders' %}">All orders</a></div>
-        <div class="role-list">
-          {% for order in seller_recent_orders %}
-            {% if order.status == 'CREATED' %}<a class="role-list-item" href="{% url 'seller_order_detail' order.id %}"><div><h4>Order #{{ order.id }}</h4><p>New order · confirm quantities and availability</p></div><span class="pill">New</span></a>{% endif %}
-          {% endfor %}
-          {% for product in seller_low_stock_products %}
-            <a class="role-list-item" href="{% url 'edit_product' product.id %}"><div><h4>{{ product.name }}</h4><p>{{ product.available_qty }} {{ product.unit }} remaining{% if product.store %} · {{ product.store.name }}{% endif %}</p></div><span class="pill">Low stock</span></a>
-          {% empty %}{% endfor %}
-          {% if seller_new_orders == 0 and seller_low_stock_count == 0 %}<div class="empty-state">Nothing urgent right now.</div>{% endif %}
-        </div>
-      </div>
-      <div class="role-section">
-        <div class="role-section-head"><h3>Quick actions</h3></div>
-        <div class="role-actions">
-          <a class="btn btn-primary btn-sm" href="{% url 'add_product' %}">Add Product</a>
-          <a class="btn btn-outline btn-sm" href="{% url 'seller_products' %}">Manage Inventory</a>
-          <a class="btn btn-outline btn-sm" href="{% url 'seller_orders' %}">View Orders</a>
-          <a class="btn btn-outline btn-sm" href="{% url 'seller_store_setup' %}">Add Store</a>
-        </div>
-      </div>
-    </section>
-    <section class="role-section">
-      <div class="role-section-head"><h3>Your stores</h3><span class="pill">{{ seller_store_count }} total</span></div>
-      <div class="store-home-grid">
-        {% for store in seller_stores %}
-        <article class="store-home-card">
-          <div class="store-home-image">{% if store.store_image %}<img src="{{ store.store_image.url }}" alt="{{ store.name }}">{% else %}Store image{% endif %}</div>
-          <div class="store-home-body"><h4>{{ store.name }}</h4><p>{% if store.market %}{{ store.market.name }}{% else %}No market selected{% endif %}{% if store.stall_number %} · Stall {{ store.stall_number }}{% endif %}</p><div class="role-actions" style="margin-top:10px;"><a class="btn btn-ghost btn-sm" href="{% url 'seller_store_edit' store.id %}">Manage</a></div></div>
-        </article>
-        {% empty %}<div class="empty-state">No store yet. Create your first store to start selling.</div>{% endfor %}
-      </div>
-    </section>
-
-  {% elif home_role == 'BUYER' %}
-    <section class="role-welcome">
-      <div><div class="eyebrow">Buyer home</div><h2>Welcome back, {{ welcome_name }}.</h2><p>Shop nearby markets, track active orders, and quickly return to what you buy most.</p></div>
-      <div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'buyer_cart' %}">Cart{% if buyer_cart_count %} ({{ buyer_cart_count }}){% endif %}</a><a class="btn btn-secondary btn-sm" href="{% url 'buyer_dashboard' %}">Full dashboard</a></div>
-    </section>
-    <section class="role-kpis">
-      <div class="role-kpi"><span>Active orders</span><strong>{{ buyer_active_orders }}</strong><small>Currently in progress</small></div>
-      <div class="role-kpi"><span>Delivered</span><strong>{{ buyer_delivered_orders }}</strong><small>Completed orders</small></div>
-      <div class="role-kpi"><span>Cart items</span><strong>{{ buyer_cart_count }}</strong><small>Ready for checkout</small></div>
-      <div class="role-kpi"><span>Markets nearby</span><strong>{{ buyer_markets|length }}</strong><small>Based on your location</small></div>
-    </section>
-    <section class="role-section-grid">
-      <div class="role-section">
-        <div class="role-section-head"><h3>Active & recent orders</h3><a class="btn btn-ghost btn-sm" href="{% url 'buyer_orders' %}">Order history</a></div>
-        <div class="role-list">{% for order in buyer_recent_orders %}<a class="role-list-item" href="{% url 'buyer_order_detail' order.id %}"><div><h4>Order #{{ order.id }}</h4><p>{% if order.market %}{{ order.market.name }} · {% endif %}GHS {{ order.total }}</p></div><span class="pill">{{ order.get_status_display }}</span></a>{% empty %}<div class="empty-state">You have not placed an order yet.</div>{% endfor %}</div>
-      </div>
-      <div class="role-section">
-        <div class="role-section-head"><h3>Markets near you</h3></div>
-        <div class="role-list">{% for market in buyer_markets %}<a class="role-list-item" href="{% url 'buyer_market_products' market.id %}"><div><h4>{{ market.name }}</h4><p>{{ market.city }}, {{ market.region }}</p></div><span class="pill">Shop</span></a>{% empty %}<div class="empty-state">No nearby markets found yet.</div>{% endfor %}</div>
-      </div>
-    </section>
-    <section class="role-section">
-      <div class="role-section-head"><h3>Recommended products</h3><span class="pill">Fresh picks</span></div>
-      <div class="product-mini-grid">{% for product in buyer_products %}<div class="product-mini"><strong>{{ product.name }}</strong><span>GHS {{ product.price }} / {{ product.unit }}</span>{% if product.store %}<span>{{ product.store.name }}</span>{% endif %}</div>{% empty %}<div class="empty-state">No products available yet.</div>{% endfor %}</div>
-    </section>
-
-  {% elif home_role == 'DRIVER' %}
-    <section class="role-welcome">
-      <div><div class="eyebrow">Driver home</div><h2>Welcome back, {{ welcome_name }}.</h2><p>See the deliveries that need your attention and keep today's route moving.</p></div>
-      <div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'driver_dashboard' %}">Delivery dashboard</a><a class="btn btn-secondary btn-sm" href="{% url 'driver_profile_setup' %}">Driver profile</a></div>
-    </section>
-    <section class="role-kpis">
-      <div class="role-kpi"><span>New assignments</span><strong>{{ driver_assigned_count }}</strong><small>Waiting for acceptance</small></div>
-      <div class="role-kpi"><span>Active deliveries</span><strong>{{ driver_active_count }}</strong><small>Assigned or accepted</small></div>
-      <div class="role-kpi"><span>Completed today</span><strong>{{ driver_completed_today }}</strong><small>Delivered successfully</small></div>
-      <div class="role-kpi"><span>Driver rating</span><strong>{{ driver_profile.rating_avg }}</strong><small>Current average</small></div>
-    </section>
-    <section class="role-section-grid">
-      <div class="role-section attention-card">
-        <div class="role-section-head"><h3>Today's delivery queue</h3></div>
-        <div class="role-list">{% for assignment in driver_assignments %}<a class="role-list-item" href="{% url 'driver_assignment_detail' assignment.id %}"><div><h4>Order #{{ assignment.order.id }}</h4><p>{% if assignment.order.market %}Pickup: {{ assignment.order.market.name }} · {% endif %}{{ assignment.order.delivery_address }}</p></div><span class="pill">{{ assignment.get_status_display }}</span></a>{% empty %}<div class="empty-state">No active delivery assignments.</div>{% endfor %}</div>
-      </div>
-      <div class="role-section"><div class="role-section-head"><h3>Quick actions</h3></div><div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'driver_dashboard' %}">View Assignments</a><a class="btn btn-outline btn-sm" href="{% url 'driver_profile_setup' %}">Update Vehicle/Profile</a></div></div>
-    </section>
-
-  {% elif home_role == 'QA' %}
-    <section class="role-welcome">
-      <div><div class="eyebrow">Quality control home</div><h2>Welcome back, {{ welcome_name }}.</h2><p>Prioritize inspections, clear the QA queue, and surface quality issues quickly.</p></div>
-      <div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'qa_dashboard' %}">QA dashboard</a></div>
-    </section>
-    <section class="role-kpis">
-      <div class="role-kpi"><span>Waiting for inspection</span><strong>{{ qa_queue_count }}</strong><small>Current QA queue</small></div>
-      <div class="role-kpi"><span>Reviewed today</span><strong>{{ qa_reviewed_today }}</strong><small>Your inspections today</small></div>
-      <div class="role-kpi"><span>Approved today</span><strong>{{ qa_approved_today }}</strong><small>Passed quality checks</small></div>
-      <div class="role-kpi"><span>Flagged today</span><strong>{{ qa_flagged_today }}</strong><small>Partial or rejected</small></div>
-    </section>
-    <section class="role-section attention-card">
-      <div class="role-section-head"><h3>Inspection queue</h3><a class="btn btn-ghost btn-sm" href="{% url 'qa_dashboard' %}">Full queue</a></div>
-      <div class="role-list">{% for order in qa_queue %}<a class="role-list-item" href="{% url 'qa_order_review' order.id %}"><div><h4>Order #{{ order.id }}</h4><p>{% if order.market %}{{ order.market.name }} · {% endif %}GHS {{ order.total }}</p></div><span class="pill">Inspect</span></a>{% empty %}<div class="empty-state">The QA queue is clear.</div>{% endfor %}</div>
-    </section>
-
-  {% elif home_role == 'ADMIN_STAFF' %}
-    <section class="role-welcome">
-      <div><div class="eyebrow">Operations home</div><h2>Welcome back, {{ welcome_name }}.</h2><p>Monitor platform activity, operational exceptions, users, disputes, and delivery flow.</p></div>
-      <div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'admin_dashboard' %}">Admin dashboard</a><a class="btn btn-secondary btn-sm" href="{% url 'admin_order_list' %}">All orders</a></div>
-    </section>
-    <section class="role-kpis">
-      <div class="role-kpi"><span>Total orders</span><strong>{{ admin_orders_count }}</strong><small>Across Market Day</small></div>
-      <div class="role-kpi"><span>Open disputes</span><strong>{{ admin_open_disputes }}</strong><small>Need resolution</small></div>
-      <div class="role-kpi"><span>Awaiting driver</span><strong>{{ admin_pending_delivery }}</strong><small>Need assignment</small></div>
-      <div class="role-kpi"><span>Users</span><strong>{{ admin_users_count }}</strong><small>Registered accounts</small></div>
-    </section>
-    <section class="role-section-grid">
-      <div class="role-section attention-card"><div class="role-section-head"><h3>Needs attention</h3><a class="btn btn-ghost btn-sm" href="{% url 'admin_order_list' %}">Operations</a></div><div class="role-list">{% for order in admin_attention_orders %}<a class="role-list-item" href="{% url 'admin_order_detail' order.id %}"><div><h4>Order #{{ order.id }}</h4><p>{% if order.market %}{{ order.market.name }} · {% endif %}{{ order.buyer.username }}</p></div><span class="pill">{{ order.get_status_display }}</span></a>{% empty %}<div class="empty-state">No operational exceptions right now.</div>{% endfor %}</div></div>
-      <div class="role-section"><div class="role-section-head"><h3>Quick actions</h3></div><div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'admin_order_list' %}">Manage Orders</a><a class="btn btn-outline btn-sm" href="{% url 'admin_disputes' %}">Disputes</a><a class="btn btn-outline btn-sm" href="{% url 'admin_user_list' %}">Users</a></div></div>
-    </section>
-
-  {% elif home_role == 'SUPER_USER' %}
-    <section class="role-welcome"><div><div class="eyebrow">Platform home</div><h2>Welcome back, {{ welcome_name }}.</h2><p>Jump between operational areas and keep a high-level view of the marketplace.</p></div></section>
-    <section class="role-kpis"><div class="role-kpi"><span>Orders</span><strong>{{ super_orders_count }}</strong></div><div class="role-kpi"><span>Active markets</span><strong>{{ super_markets_count }}</strong></div><div class="role-kpi"><span>Active products</span><strong>{{ super_products_count }}</strong></div><div class="role-kpi"><span>Open disputes</span><strong>{{ super_open_disputes }}</strong></div></section>
-    <section class="role-section"><div class="role-section-head"><h3>Workspaces</h3></div><div class="role-actions"><a class="btn btn-primary btn-sm" href="{% url 'seller_dashboard' %}">Seller Operations</a><a class="btn btn-outline btn-sm" href="{% url 'qa_dashboard' %}">Quality Control</a><a class="btn btn-outline btn-sm" href="{% url 'driver_dashboard' %}">Delivery Operations</a></div></section>
+  {% if featured_stores %}
+  <section class="market-section">
+    <div class="market-section-head"><div><h2>Local sellers to discover</h2><p>Independent stores serving Market Day customers.</p></div></div>
+    <div class="store-grid-market">
+      {% for store in featured_stores %}
+      <article class="store-tile">
+        <div class="store-tile-image">{% if store.store_image %}<img src="{{ store.store_image.url }}" alt="{{ store.name }}">{% else %}Store image{% endif %}</div>
+        <div class="store-tile-body"><h3>{{ store.name }}</h3><p>{% if store.market %}{{ store.market.name }} · {{ store.market.city }}{% else %}Market Day seller{% endif %}</p></div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
   {% endif %}
 </div>
-{% endif %}
 {% endblock %}
