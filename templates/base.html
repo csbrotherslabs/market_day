@@ -64,48 +64,50 @@
                 <span>{% if user.is_authenticated %}{{ user.profile.get_role_display }}{% else %}Sign in{% endif %}</span>
               </div>
             </button>
-            <div class="profile-menu hidden" id="profileMenu" role="menu" aria-labelledby="profileMenuToggle">
+            <div class="profile-menu account-panel hidden" id="profileMenu" role="menu" aria-labelledby="profileMenuToggle">
               {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}" role="menuitem">My Account</a>
-                <a href="{% url 'profile' %}#account-settings" role="menuitem">Account Settings</a>
-
-                {% if user.profile.role == 'BUYER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-                  <div class="menu-title">Shopping</div>
-                  <a href="{% url 'buyer_orders' %}" role="menuitem">My Orders</a>
-                  <a href="{% url 'buyer_cart' %}" role="menuitem">Cart</a>
-                {% endif %}
-
+                <div class="account-panel-header">
+                  <div class="avatar account-panel-avatar">{{ user.first_name|default:user.username|slice:':1'|upper }}</div>
+                  <div class="account-panel-identity"><strong>{{ user.get_full_name|default:user.username }}</strong><span>{{ user.profile.get_role_display }}</span></div>
+                  <button type="button" class="account-panel-close" id="profileMenuClose" aria-label="Close account menu"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="account-menu-section"><div class="account-menu-label">Account</div>
+                  <a href="{% url 'profile' %}" role="menuitem"><i class="fa-regular fa-user fa-fw"></i><span>My Account</span></a>
+                  <a href="{% url 'profile' %}#account-settings" role="menuitem"><i class="fa-solid fa-gear fa-fw"></i><span>Account Settings</span></a>
+                </div>
+                <div class="account-menu-section"><div class="account-menu-label">Shopping</div>
+                  <a href="{% url 'buyer_orders' %}" role="menuitem"><i class="fa-solid fa-box fa-fw"></i><span>My Purchases</span></a>
+                  <a href="{% url 'buyer_cart' %}" role="menuitem"><i class="fa-solid fa-cart-shopping fa-fw"></i><span>Cart</span></a>
+                </div>
                 {% if user.profile.role == 'SELLER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-                  <div class="menu-title">Selling</div>
-                  <a href="{% url 'seller_dashboard' %}" role="menuitem">Seller Dashboard</a>
-                  <a href="{% url 'seller_products' %}" role="menuitem">Products &amp; Inventory</a>
-                  <a href="{% url 'seller_orders' %}" role="menuitem">Seller Orders</a>
-                  <a href="{% url 'seller_store_setup' %}" role="menuitem">Add Store</a>
-                {% endif %}
-
+                <div class="account-menu-section"><div class="account-menu-label">Selling</div>
+                  <a href="{% url 'seller_dashboard' %}" role="menuitem"><i class="fa-solid fa-chart-line fa-fw"></i><span>Seller Dashboard</span></a>
+                  <a href="{% url 'seller_products' %}" role="menuitem"><i class="fa-solid fa-boxes-stacked fa-fw"></i><span>Products &amp; Inventory</span></a>
+                  <a href="{% url 'seller_orders' %}" role="menuitem"><i class="fa-solid fa-receipt fa-fw"></i><span>Seller Orders</span></a>
+                  <a href="{% url 'seller_store_setup' %}" role="menuitem"><i class="fa-solid fa-store fa-fw"></i><span>Add Store</span></a>
+                </div>{% endif %}
                 {% if user.profile.role == 'DRIVER' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-                  <div class="menu-title">Transport</div>
-                  <a href="{% url 'driver_dashboard' %}" role="menuitem">Load Board &amp; Assignments</a>
-                  <a href="{% url 'driver_profile_setup' %}" role="menuitem">Driver Profile</a>
-                {% endif %}
-
+                <div class="account-menu-section"><div class="account-menu-label">Transport</div>
+                  <a href="{% url 'driver_dashboard' %}" role="menuitem"><i class="fa-solid fa-truck-fast fa-fw"></i><span>Load Board &amp; Assignments</span></a>
+                  <a href="{% url 'driver_profile_setup' %}" role="menuitem"><i class="fa-solid fa-id-card fa-fw"></i><span>Driver Profile</span></a>
+                </div>{% endif %}
                 {% if user.profile.role == 'QA' or user.profile.role == 'SUPER_USER' or user.profile.role == 'ADMIN_STAFF' %}
-                  <div class="menu-title">Quality Assurance</div>
-                  <a href="{% url 'qa_dashboard' %}" role="menuitem">Assigned Orders &amp; Inspection Queue</a>
-                {% endif %}
-
+                <div class="account-menu-section"><div class="account-menu-label">Quality Assurance</div>
+                  <a href="{% url 'qa_dashboard' %}" role="menuitem"><i class="fa-solid fa-clipboard-check fa-fw"></i><span>Assigned Orders &amp; Inspection Queue</span></a>
+                </div>{% endif %}
                 {% if user.profile.role == 'ADMIN_STAFF' %}
-                  <div class="menu-title">Administration</div>
-                  <a href="{% url 'admin_dashboard' %}" role="menuitem">Admin Operations</a>
-                  <a href="{% url 'admin_order_list' %}" role="menuitem">All Orders</a>
-                  <a href="{% url 'admin_disputes' %}" role="menuitem">Disputes</a>
-                  <a href="{% url 'admin_user_list' %}" role="menuitem">Users</a>
-                {% endif %}
-
-                <a href="{% url 'logout' %}" role="menuitem">Sign Out</a>
+                <div class="account-menu-section"><div class="account-menu-label">Administration</div>
+                  <a href="{% url 'admin_dashboard' %}" role="menuitem"><i class="fa-solid fa-gauge-high fa-fw"></i><span>Admin Operations</span></a>
+                  <a href="{% url 'admin_order_list' %}" role="menuitem"><i class="fa-solid fa-list-check fa-fw"></i><span>All Orders</span></a>
+                  <a href="{% url 'admin_disputes' %}" role="menuitem"><i class="fa-solid fa-triangle-exclamation fa-fw"></i><span>Disputes</span></a>
+                  <a href="{% url 'admin_user_list' %}" role="menuitem"><i class="fa-solid fa-users fa-fw"></i><span>Users</span></a>
+                </div>{% endif %}
+                <div class="account-menu-section account-menu-footer"><a href="{% url 'logout' %}" role="menuitem" class="account-signout"><i class="fa-solid fa-arrow-right-from-bracket fa-fw"></i><span>Sign Out</span></a></div>
               {% else %}
-                <a href="{% url 'login' %}" role="menuitem">Sign in</a>
-                <a href="{% url 'register' %}" role="menuitem">Create account</a>
+                <div class="account-menu-section">
+                  <a href="{% url 'login' %}" role="menuitem"><i class="fa-solid fa-right-to-bracket fa-fw"></i><span>Sign in</span></a>
+                  <a href="{% url 'register' %}" role="menuitem"><i class="fa-solid fa-user-plus fa-fw"></i><span>Create account</span></a>
+                </div>
               {% endif %}
             </div>
           </div>
@@ -125,7 +127,7 @@
   </div>
 
 
-  <div id='locationModal' class='location-modal hidden'>
+  <div class="account-drawer-backdrop hidden" id="accountDrawerBackdrop" aria-hidden="true"></div>\n\n  <div id='locationModal' class='location-modal hidden'>
     <div class='location-card'>
       <button id='closeLocationModal' class='btn btn-pill btn-secondary btn-sm'>Close</button>
       <h3>Change Location</h3>
