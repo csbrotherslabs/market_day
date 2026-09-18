@@ -181,3 +181,76 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
   .account-drawer-backdrop{transition:opacity .22s ease}
   .topbar-right>.icon-btn[aria-label="Messages"]{display:none}
 }
+
+/* Mobile shell polish: opaque, independent full-height drawers */
+@media(max-width:900px){
+  .topbar{
+    flex-direction:row;
+    align-items:center;
+    gap:10px;
+    top:8px;
+    padding:9px 10px;
+    border-radius:18px;
+    background:var(--panel-strong);
+  }
+  .topbar-left{display:flex;flex:1;min-width:0;width:auto}
+  .topbar-right{display:flex;width:auto;gap:7px;flex:0 0 auto}
+  .search-wrap{height:44px;border-radius:13px;padding:0 11px}
+  .topbar-right>.icon-btn{display:none}
+  .profile{padding:3px;border:0;background:transparent}
+  .profile .avatar{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:12px}
+  .sidebar{
+    background:var(--panel-strong);
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    padding:18px 16px 24px;
+    border-radius:0 22px 22px 0;
+  }
+  .sidebar .brand{padding-right:48px}
+  .sidebar .nav{gap:5px}
+  .sidebar .nav a{min-height:48px;padding:12px 13px;border-radius:14px}
+  .sidebar .location-chip-sidebar{margin:8px 0 14px}
+}
+@media(max-width:700px){
+  .main{padding:10px}
+  .topbar{margin-bottom:14px}
+  .profile-dropdown{position:relative}
+  .profile-menu.account-panel{
+    position:fixed !important;
+    inset:0 0 0 auto !important;
+    width:min(92vw,390px) !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    margin:0 !important;
+    border:0 !important;
+    border-left:1px solid var(--border) !important;
+    border-radius:22px 0 0 22px !important;
+    background:var(--panel-strong) !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+    z-index:6001 !important;
+    transform:translate3d(0,0,0);
+    box-shadow:-22px 0 55px rgba(0,0,0,.32) !important;
+  }
+  .profile-menu.account-panel.hidden{
+    display:grid !important;
+    transform:translate3d(105%,0,0) !important;
+    visibility:hidden;
+  }
+  .profile-menu.account-panel:not(.hidden){visibility:visible}
+  .account-panel-header{
+    min-height:78px;
+    padding:16px 18px;
+    background:var(--panel-strong);
+  }
+  .account-menu-section{padding:9px 12px}
+  .profile-menu.account-panel a{min-height:46px;padding:11px 12px;border-radius:13px}
+  .account-drawer-backdrop{z-index:6000}
+}
+@media(max-width:430px){
+  .topbar-right{gap:4px}
+  .search-input{font-size:12px}
+  .search-input::placeholder{font-size:12px}
+}
