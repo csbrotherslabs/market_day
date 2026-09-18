@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from core_app.decorators import role_required
 from core_app.models import Dispute, Market, Order, OrderItem, Product, Rating
 
+SHOPPER_ROLES = ['BUYER', 'SELLER', 'DRIVER', 'QA', 'SUPER_USER', 'ADMIN_STAFF']
+
 
 def _get_cart(session):
     return session.setdefault('cart', {})
@@ -16,7 +18,7 @@ def _save_cart(session, cart):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def dashboard(request):
     orders = Order.objects.filter(buyer=request.user)[:6]
     markets = Market.objects.filter(active=True)[:6]
@@ -24,7 +26,7 @@ def dashboard(request):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def market_products(request, market_id):
     market = get_object_or_404(Market, id=market_id)
     products = Product.objects.filter(store__market=market, store__active=True, active=True).select_related('seller', 'store', 'category')
@@ -32,7 +34,7 @@ def market_products(request, market_id):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id, active=True)
     qty = int(request.POST.get('qty', 1) or 1)
@@ -45,7 +47,7 @@ def add_to_cart(request, product_id):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def remove_from_cart(request, product_id):
     cart = _get_cart(request.session)
     cart.pop(str(product_id), None)
@@ -55,7 +57,7 @@ def remove_from_cart(request, product_id):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def cart_view(request):
     cart = _get_cart(request.session)
     product_ids = [int(pid) for pid in cart.keys()] if cart else []
@@ -64,9 +66,10 @@ def cart_view(request):
     subtotal = Decimal('0.00')
     for product in products:
         qty = cart.get(str(product.id), 0)
-        line_total = product.price * qty
+        unit_price = product.discount_price if product.discount_price is not None and product.discount_price < product.price else product.price
+        line_total = unit_price * qty
         subtotal += line_total
-        items.append({'product': product, 'qty': qty, 'line_total': line_total})
+        items.append({'product': product, 'qty': qty, 'unit_price': unit_price, 'line_total': line_total})
     delivery_fee = Decimal('15.00') if items else Decimal('0.00')
     total = subtotal + delivery_fee
     return render(request, 'buyers_app/cart.html', {
@@ -78,7 +81,7 @@ def cart_view(request):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def checkout(request):
     cart = _get_cart(request.session)
     if not cart:
@@ -89,7 +92,8 @@ def checkout(request):
     products = Product.objects.filter(id__in=product_ids).select_related('seller', 'store__market')
     subtotal = Decimal('0.00')
     for product in products:
-        subtotal += product.price * cart[str(product.id)]
+        unit_price = product.discount_price if product.discount_price is not None and product.discount_price < product.price else product.price
+        subtotal += unit_price * cart[str(product.id)]
     delivery_fee = Decimal('15.00')
     total = subtotal + delivery_fee
 
@@ -115,13 +119,14 @@ def checkout(request):
             )
             for product in products:
                 qty = cart[str(product.id)]
+                unit_price = product.discount_price if product.discount_price is not None and product.discount_price < product.price else product.price
                 OrderItem.objects.create(
                     order=order,
                     product=product,
                     seller=product.seller,
                     qty_requested=qty,
-                    unit_price=product.price,
-                    line_total=product.price * qty,
+                    unit_price=unit_price,
+                    line_total=unit_price * qty,
                 )
             request.session['cart'] = {}
             request.session.modified = True
@@ -136,14 +141,14 @@ def checkout(request):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def order_history(request):
     orders = Order.objects.filter(buyer=request.user)
     return render(request, 'buyers_app/orders.html', {'orders': orders})
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id, buyer=request.user)
     assignment = getattr(order, 'deliveryassignment', None)
@@ -152,7 +157,7 @@ def order_detail(request, order_id):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def create_dispute(request, order_id):
     order = get_object_or_404(Order, id=order_id, buyer=request.user)
     if request.method == 'POST':
@@ -170,7 +175,7 @@ def create_dispute(request, order_id):
 
 
 @login_required
-@role_required(['BUYER'])
+@role_required(SHOPPER_ROLES)
 def create_rating(request, order_id):
     order = get_object_or_404(Order, id=order_id, buyer=request.user)
     if request.method == 'POST':
