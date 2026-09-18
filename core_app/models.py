@@ -68,6 +68,12 @@ class Product(models.Model):
     is_wholesale=models.BooleanField(default=False)
     made_in_ghana=models.BooleanField(default=False)
 
+    @property
+    def discount_percentage(self):
+        if self.discount_price is not None and self.price and self.discount_price < self.price:
+            return round(((self.price - self.discount_price) / self.price) * 100)
+        return 0
+
 class Order(models.Model):
     STATUS_CHOICES=[('CREATED','Created'),('SELLER_CONFIRMED','Seller Confirmed'),('QA_PENDING','QA Pending'),('QA_APPROVED','QA Approved'),('QA_PARTIAL','QA Partial'),('QA_REJECTED','QA Rejected'),('DRIVER_PENDING_ASSIGNMENT','Driver Pending Assignment'),('DRIVER_ASSIGNED','Driver Assigned'),('OUT_FOR_DELIVERY','Out For Delivery'),('DELIVERED','Delivered'),('CANCELLED','Cancelled'),('DISPUTED','Disputed')]
     buyer=models.ForeignKey(User,on_delete=models.CASCADE,related_name='buyer_orders'); market=models.ForeignKey(Market,on_delete=models.SET_NULL,blank=True,null=True); status=models.CharField(max_length=40,choices=STATUS_CHOICES,default='CREATED'); delivery_address=models.CharField(max_length=255); delivery_landmark=models.CharField(max_length=255,blank=True); delivery_phone=models.CharField(max_length=30); subtotal=models.DecimalField(max_digits=10, decimal_places=2, default=0); delivery_fee=models.DecimalField(max_digits=10, decimal_places=2, default=0); total=models.DecimalField(max_digits=10, decimal_places=2, default=0); created_at=models.DateTimeField(auto_now_add=True); updated_at=models.DateTimeField(auto_now=True)
