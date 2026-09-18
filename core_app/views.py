@@ -339,7 +339,7 @@ def profile_view(request):
             messages.error(request, err)
             return redirect('profile')
         if image: profile.profile_image = image
-        profile.save(); messages.success(request, 'Account information updated successfully.'); return redirect('/profile/?view=settings')
+        profile.save(); messages.success(request, 'Account information updated successfully.'); return redirect('/accounts/profile/?view=settings')
     return render(request, 'core_app/profile.html', {
         'profile': profile,
         'settings_view': request.GET.get('view') == 'settings',
