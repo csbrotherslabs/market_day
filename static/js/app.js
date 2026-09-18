@@ -398,3 +398,56 @@ if (window.location.pathname.endsWith('/sellers/stores/add/')) {
     }
   });
 }
+
+
+// Add marketplace products to the session cart without reloading the page.
+document.addEventListener('submit', async (event) => {
+  const form = event.target.closest('.md-cart-form');
+  if (!form) return;
+  event.preventDefault();
+
+  const button = form.querySelector('.md-cart-button');
+  if (!button || button.disabled) return;
+  const original = button.innerHTML;
+  button.disabled = true;
+  button.classList.add('is-adding');
+  button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Adding...</span>';
+
+  try {
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: {'X-Requested-With': 'XMLHttpRequest'},
+      credentials: 'same-origin'
+    });
+    if (!response.ok) throw new Error('Unable to add product');
+    const data = await response.json();
+
+    const count = document.getElementById('navbarCartCount');
+    if (count) {
+      count.textContent = data.cart_count;
+      count.classList.remove('hidden');
+      count.classList.remove('cart-count-pop');
+      void count.offsetWidth;
+      count.classList.add('cart-count-pop');
+    }
+
+    button.classList.remove('is-adding');
+    button.classList.add('is-added');
+    button.innerHTML = '<i class="fa-solid fa-check"></i><span>Added to cart</span>';
+    window.setTimeout(() => {
+      button.classList.remove('is-added');
+      button.innerHTML = original;
+      button.disabled = false;
+    }, 1300);
+  } catch (error) {
+    button.classList.remove('is-adding');
+    button.classList.add('is-error');
+    button.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>Try again</span>';
+    window.setTimeout(() => {
+      button.classList.remove('is-error');
+      button.innerHTML = original;
+      button.disabled = false;
+    }, 1600);
+  }
+});
