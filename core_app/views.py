@@ -159,6 +159,26 @@ def _apply_product_filters(request, products):
     return products, query, sort
 
 
+def public_storefront(request, store_id):
+    store = get_object_or_404(
+        SellerStore.objects.select_related('seller', 'seller__user', 'market'),
+        id=store_id,
+        active=True,
+        seller__active=True,
+    )
+    products = Product.objects.filter(
+        store=store, active=True, available_qty__gt=0
+    ).select_related('seller', 'seller__user', 'store', 'store__market', 'category').order_by('-created_at')
+    products, query, sort = _apply_product_filters(request, products)
+    return render(request, 'core_app/public_storefront.html', {
+        'store': store,
+        'seller': store.seller,
+        'products': products,
+        'query': query,
+        'sort': sort,
+    })
+
+
 def product_collection(request, collection):
     if collection not in MARKETPLACE_COLLECTIONS:
         raise Http404
