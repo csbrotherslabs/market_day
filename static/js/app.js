@@ -4,6 +4,8 @@ const collapseBtn = document.getElementById('collapseBtn');
 const appShell = document.getElementById('appShell');
 const profileMenuToggle = document.getElementById('profileMenuToggle');
 const profileMenu = document.getElementById('profileMenu');
+const profileMenuClose = document.getElementById('profileMenuClose');
+const accountDrawerBackdrop = document.getElementById('accountDrawerBackdrop');
 
 const savedTheme = localStorage.getItem('marketflow-theme');
 const savedSidebar = localStorage.getItem('marketflow-sidebar');
@@ -41,17 +43,54 @@ window.addEventListener('resize', () => {
 });
 
 if (profileMenuToggle && profileMenu) {
-  profileMenuToggle.addEventListener('click', () => {
-    const willOpen = profileMenu.classList.contains('hidden');
-    profileMenu.classList.toggle('hidden');
-    profileMenuToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  const isMobileAccountMenu = () => window.innerWidth <= 700;
+
+  const openProfileMenu = () => {
+    profileMenu.classList.remove('hidden');
+    profileMenuToggle.setAttribute('aria-expanded', 'true');
+    if (isMobileAccountMenu()) {
+      body.classList.add('account-drawer-open');
+      if (accountDrawerBackdrop) {
+        accountDrawerBackdrop.classList.remove('hidden');
+        accountDrawerBackdrop.setAttribute('aria-hidden', 'false');
+      }
+    }
+  };
+
+  const closeProfileMenu = () => {
+    profileMenu.classList.add('hidden');
+    profileMenuToggle.setAttribute('aria-expanded', 'false');
+    body.classList.remove('account-drawer-open');
+    if (accountDrawerBackdrop) {
+      accountDrawerBackdrop.classList.add('hidden');
+      accountDrawerBackdrop.setAttribute('aria-hidden', 'true');
+    }
+  };
+
+  profileMenuToggle.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (profileMenu.classList.contains('hidden')) {
+      openProfileMenu();
+    } else {
+      closeProfileMenu();
+    }
   });
 
+  if (profileMenuClose) profileMenuClose.addEventListener('click', closeProfileMenu);
+  if (accountDrawerBackdrop) accountDrawerBackdrop.addEventListener('click', closeProfileMenu);
+
   document.addEventListener('click', (event) => {
-    if (!profileMenu.contains(event.target) && !profileMenuToggle.contains(event.target)) {
-      profileMenu.classList.add('hidden');
-      profileMenuToggle.setAttribute('aria-expanded', 'false');
+    if (!isMobileAccountMenu() && !profileMenu.contains(event.target) && !profileMenuToggle.contains(event.target)) {
+      closeProfileMenu();
     }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !profileMenu.classList.contains('hidden')) closeProfileMenu();
+  });
+
+  window.addEventListener('resize', () => {
+    if (!profileMenu.classList.contains('hidden')) closeProfileMenu();
   });
 }
 
