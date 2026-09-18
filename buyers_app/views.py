@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from core_app.decorators import role_required
 from core_app.models import Dispute, Market, Order, OrderItem, Product, Rating
@@ -42,6 +43,15 @@ def add_to_cart(request, product_id):
     product_key = str(product.id)
     cart[product_key] = cart.get(product_key, 0) + max(1, qty)
     _save_cart(request.session, cart)
+    cart_count = sum(cart.values())
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'ok': True,
+            'product_id': product.id,
+            'product_name': product.name,
+            'cart_count': cart_count,
+            'product_qty': cart[product_key],
+        })
     messages.success(request, f'{product.name} added to cart.')
     return redirect(request.META.get('HTTP_REFERER', 'buyer_cart'))
 
