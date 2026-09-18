@@ -6,6 +6,9 @@ const profileMenuToggle = document.getElementById('profileMenuToggle');
 const profileMenu = document.getElementById('profileMenu');
 const profileMenuClose = document.getElementById('profileMenuClose');
 const accountDrawerBackdrop = document.getElementById('accountDrawerBackdrop');
+const mobileSidebar = document.getElementById('mobileSidebar');
+const mobileSidebarClose = document.getElementById('mobileSidebarClose');
+const mobileSidebarBackdrop = document.getElementById('mobileSidebarBackdrop');
 
 const savedTheme = localStorage.getItem('marketflow-theme');
 const savedSidebar = localStorage.getItem('marketflow-sidebar');
@@ -25,18 +28,48 @@ if (toggle) {
   });
 }
 
+const closeMobileSidebar = () => {
+  if (!mobileSidebar) return;
+  mobileSidebar.classList.remove('mobile-open');
+  body.classList.remove('mobile-sidebar-open');
+  collapseBtn?.setAttribute('aria-expanded', 'false');
+  if (mobileSidebarBackdrop) {
+    mobileSidebarBackdrop.classList.add('hidden');
+    mobileSidebarBackdrop.setAttribute('aria-hidden', 'true');
+  }
+};
+
+const openMobileSidebar = () => {
+  if (!mobileSidebar) return;
+  mobileSidebar.classList.add('mobile-open');
+  body.classList.add('mobile-sidebar-open');
+  collapseBtn?.setAttribute('aria-expanded', 'true');
+  if (mobileSidebarBackdrop) {
+    mobileSidebarBackdrop.classList.remove('hidden');
+    mobileSidebarBackdrop.setAttribute('aria-hidden', 'false');
+  }
+};
+
 if (collapseBtn && appShell) {
+  collapseBtn.setAttribute('aria-expanded', 'false');
   collapseBtn.addEventListener('click', () => {
-    if (window.innerWidth <= 900) return;
+    if (window.innerWidth <= 900) {
+      mobileSidebar?.classList.contains('mobile-open') ? closeMobileSidebar() : openMobileSidebar();
+      return;
+    }
     appShell.classList.toggle('collapsed');
     localStorage.setItem('marketflow-sidebar', appShell.classList.contains('collapsed') ? 'collapsed' : 'expanded');
   });
 }
+mobileSidebarClose?.addEventListener('click', closeMobileSidebar);
+mobileSidebarBackdrop?.addEventListener('click', closeMobileSidebar);
+mobileSidebar?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMobileSidebar));
 
 window.addEventListener('resize', () => {
   if (!appShell) return;
   if (window.innerWidth <= 900) {
     appShell.classList.remove('collapsed');
+    closeMobileSidebar();
   } else if (localStorage.getItem('marketflow-sidebar') === 'collapsed') {
     appShell.classList.add('collapsed');
   }
@@ -87,6 +120,7 @@ if (profileMenuToggle && profileMenu) {
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && !profileMenu.classList.contains('hidden')) closeProfileMenu();
+    if (event.key === 'Escape') closeMobileSidebar();
   });
 
   window.addEventListener('resize', () => {
