@@ -311,3 +311,12 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
 .md-cart-form{margin:0!important}.md-cart-button{min-height:42px!important;border-radius:12px!important;font-size:12px!important}
 @media(max-width:1100px) and (min-width:701px){.md-seller-row{grid-template-columns:38px minmax(0,1fr) auto!important}.md-seller-photo{width:38px!important;height:38px!important;min-width:38px!important}.md-rating{display:none!important}.md-product-name{font-size:16px!important}.md-price-group strong{font-size:18px!important}}
 @media(max-width:700px){.md-product-content{padding:11px!important}.md-seller-row{grid-template-columns:34px minmax(0,1fr) auto!important;margin-bottom:10px!important}.md-seller-photo{width:34px!important;height:34px!important;min-width:34px!important}.md-verified{font-size:14px!important}.md-rating{display:none!important}.md-shop-link{font-size:10px!important}.md-market{font-size:8px!important}.md-product-name{font-size:14px!important;margin-bottom:4px!important}.md-product-description{font-size:9px!important;margin-bottom:10px!important}.md-price-row{margin-bottom:9px!important}.md-price-group strong{font-size:16px!important}.md-price-group del{font-size:8px!important}.md-unit{font-size:8px!important}.md-cart-button{min-height:38px!important;font-size:10px!important}}
+
+/* Product-card row alignment: reserve consistent content space so prices and actions line up across a four-card row. */
+.md-product-name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden;min-height:22px}
+.md-product-description{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;overflow:hidden!important;height:31px!important;min-height:31px!important;max-height:31px!important;margin-bottom:12px!important}
+.md-price-row{min-height:30px!important}
+.md-product-tags{min-height:27px!important;align-items:center!important}
+.md-tag i.fa-circle-check{color:#079447}
+@media(max-width:1100px) and (min-width:701px){.md-product-description{height:31px!important;min-height:31px!important;max-height:31px!important}.md-product-tags{min-height:27px!important}}
+@media(max-width:700px){.md-product-name{min-height:18px}.md-product-description{height:26px!important;min-height:26px!important;max-height:26px!important}.md-price-row{min-height:25px!important}.md-product-tags{min-height:24px!important}}
