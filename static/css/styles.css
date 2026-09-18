@@ -265,3 +265,9 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
     z-index:6001;
   }
 }
+
+/* Prevent the closed mobile sidebar shadow from bleeding onto the viewport edge. */
+@media(max-width:900px){
+  .sidebar{box-shadow:none}
+  .sidebar.mobile-open{box-shadow:24px 0 60px rgba(0,0,0,.38)}
+}
