@@ -1,24 +1,42 @@
 {% extends 'base.html' %}
-{% block title %}{{ market.name }}{% endblock %}
+{% block title %}{{ market.name }} · Market Day{% endblock %}
 {% block content %}
-<div class="card">
-  <div class="section-head"><h3>{{ market.name }}</h3><span class="pill">{{ market.city }}</span></div>
-  <div class="product-grid">
-    {% for product in products %}
-    <div class="product-card">
-      <div class="product-thumb">🛍</div>
-      <h4>{{ product.name }}</h4>
-      <p>{% if product.store %}<a href="{% url 'public_storefront' product.store.id %}">{{ product.store.name }}</a>{% else %}{{ product.seller.stall_name|default:product.seller.user.username }}{% endif %}</p><div style="display:flex;align-items:center;gap:7px;margin:8px 0">{% if product.seller.seller_photo %}<img src="{{ product.seller.seller_photo.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover">{% else %}<span class="avatar" style="width:28px;height:28px">{{ product.seller.user.first_name|default:product.seller.user.username|slice:':1'|upper }}</span>{% endif %}<small>{{ product.seller.user.get_full_name|default:product.seller.user.username }}</small></div>
-      <div class="price-row"><span>GHS {{ product.price }}</span><small>/ {{ product.unit }}</small></div>
-      <form method="POST" action="{% url 'add_to_cart' product.id %}" class="inline-form">
-        {% csrf_token %}
-        <input type="number" name="qty" value="1" min="1" class="small-input">
-        <button class="btn btn-primary" type="submit">Add to cart</button>
-      </form>
-    </div>
-    {% empty %}
-    <div class="empty-state">No active products in this market.</div>
-    {% endfor %}
-  </div>
+<style>
+.market-page{max-width:1500px;margin:0 auto}.market-page-hero{padding:28px 30px;border:1px solid rgba(15,159,82,.16);border-radius:25px;background:linear-gradient(135deg,rgba(15,159,82,.12),rgba(232,165,26,.07));display:flex;justify-content:space-between;align-items:end;gap:18px}.market-page-hero h1{margin:5px 0 7px;font-size:clamp(27px,4vw,42px);letter-spacing:-1.4px}.market-page-hero p{margin:0;color:var(--muted);font-size:12px}.market-location{display:inline-flex;gap:6px;align-items:center;color:var(--btn-green);font-size:11px;font-weight:800}.market-result-count{padding:9px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--border);font-size:11px;font-weight:800;white-space:nowrap}.market-browser{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;margin-top:18px}.market-filter-panel{align-self:start;position:sticky;top:18px;padding:17px;border:1px solid var(--border);border-radius:20px;background:var(--panel)}.market-filter-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.market-filter-title strong{font-size:14px}.market-clear{font-size:10px;color:var(--btn-green);font-weight:800}.market-filter-group{padding:14px 0;border-top:1px solid var(--border)}.market-filter-group label{display:block;margin-bottom:7px;font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.7px}.market-filter-group select,.market-filter-group input{width:100%;min-height:39px;padding:8px 10px;border:1px solid var(--border);border-radius:11px;background:var(--panel-strong);color:var(--text);font-size:11px}.market-check{display:flex!important;align-items:center;gap:8px;margin:8px 0!important;text-transform:none!important;letter-spacing:0!important;font-size:11px!important;color:var(--text)!important;font-weight:600!important}.market-check input{width:15px!important;height:15px!important;min-height:0!important}.market-filter-submit{width:100%;min-height:40px}.market-results-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:13px}.market-search{position:relative;flex:1}.market-search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px}.market-search input{width:100%;min-height:43px;padding:10px 13px 10px 35px;border:1px solid var(--border);border-radius:13px;background:var(--panel);color:var(--text)}.market-sort{min-height:43px;padding:8px 12px;border:1px solid var(--border);border-radius:13px;background:var(--panel);color:var(--text);font-size:11px}.market-product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.market-product-grid .md-product-card{min-width:0}.market-empty{grid-column:1/-1;padding:55px 20px;text-align:center;border:1px dashed var(--border);border-radius:20px;background:var(--panel)}.market-empty i{display:block;margin-bottom:10px;color:var(--btn-green);font-size:28px}.market-mobile-filter{display:none}
+@media(max-width:1100px){.market-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:850px){.market-browser{grid-template-columns:1fr}.market-filter-panel{position:static}.market-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.market-page-hero{padding:21px 17px;align-items:flex-start;flex-direction:column}.market-browser{gap:12px}.market-filter-panel{padding:13px}.market-results-toolbar{align-items:stretch;flex-direction:column}.market-sort{width:100%}.market-product-grid{gap:9px}}
+</style>
+<div class="market-page">
+  <header class="market-page-hero">
+    <div><span class="market-location"><i class="fa-solid fa-location-dot"></i>{{ market.city }}{% if market.region %}, {{ market.region }}{% endif %}</span><h1>{{ market.name }}</h1><p>{% if market.description %}{{ market.description|truncatechars:150 }}{% else %}Shop available products from sellers operating in this market.{% endif %}</p></div>
+    <span class="market-result-count">{{ result_count }} product{{ result_count|pluralize }}</span>
+  </header>
+
+  <form method="get" class="market-browser">
+    <aside class="market-filter-panel">
+      <div class="market-filter-title"><strong><i class="fa-solid fa-sliders"></i>&nbsp; Filters</strong><a class="market-clear" href="{% url 'buyer_market_products' market.id %}">Clear all</a></div>
+      <div class="market-filter-group"><label for="categoryFilter">Category</label><select id="categoryFilter" name="category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category.category_id }}" {% if selected_category == category.category_id|stringformat:"s" %}selected{% endif %}>{{ category.category__name }}</option>{% endfor %}</select></div>
+      <div class="market-filter-group"><label for="storeFilter">Seller / shop</label><select id="storeFilter" name="store"><option value="">All shops</option>{% for store in stores %}<option value="{{ store.store_id }}" {% if selected_store == store.store_id|stringformat:"s" %}selected{% endif %}>{{ store.store__name }}</option>{% endfor %}</select></div>
+      <div class="market-filter-group"><label>Product options</label><label class="market-check"><input type="checkbox" name="deals" value="1" {% if deals %}checked{% endif %}> Deals & discounts</label><label class="market-check"><input type="checkbox" name="ghana" value="1" {% if ghana %}checked{% endif %}> Made in Ghana</label><label class="market-check"><input type="checkbox" name="wholesale" value="1" {% if wholesale %}checked{% endif %}> Wholesale & bulk</label></div>
+      <input type="hidden" name="q" value="{{ query }}"><input type="hidden" name="sort" value="{{ sort }}">
+      <button class="btn btn-primary market-filter-submit" type="submit"><i class="fa-solid fa-filter"></i> Apply filters</button>
+    </aside>
+
+    <section>
+      <div class="market-results-toolbar">
+        <div class="market-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" name="q" value="{{ query }}" placeholder="Search products, categories or sellers in {{ market.name }}..."></div>
+        <select class="market-sort" name="sort" onchange="this.form.submit()"><option value="recommended" {% if sort == 'recommended' %}selected{% endif %}>Recommended</option><option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option><option value="price-low" {% if sort == 'price-low' %}selected{% endif %}>Price: Low to high</option><option value="price-high" {% if sort == 'price-high' %}selected{% endif %}>Price: High to low</option><option value="rating" {% if sort == 'rating' %}selected{% endif %}>Seller rating</option></select>
+        <button class="btn btn-secondary" type="submit">Search</button>
+      </div>
+      <div class="market-product-grid">
+        {% for product in products %}
+          {% include 'core_app/includes/product_card.html' %}
+        {% empty %}
+          <div class="market-empty"><i class="fa-solid fa-basket-shopping"></i><strong>No products match these filters.</strong><p class="muted">Try clearing a filter or searching for something else.</p></div>
+        {% endfor %}
+      </div>
+    </section>
+  </form>
 </div>
 {% endblock %}
