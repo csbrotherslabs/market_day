@@ -8,7 +8,7 @@
     <div class="product-card">
       <div class="product-thumb">🛍</div>
       <h4>{{ product.name }}</h4>
-      <p>{{ product.seller.stall_name|default:product.seller.user.username }}</p>
+      <p>{% if product.store %}<a href="{% url 'public_storefront' product.store.id %}">{{ product.store.name }}</a>{% else %}{{ product.seller.stall_name|default:product.seller.user.username }}{% endif %}</p><div style="display:flex;align-items:center;gap:7px;margin:8px 0">{% if product.seller.seller_photo %}<img src="{{ product.seller.seller_photo.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover">{% else %}<span class="avatar" style="width:28px;height:28px">{{ product.seller.user.first_name|default:product.seller.user.username|slice:':1'|upper }}</span>{% endif %}<small>{{ product.seller.user.get_full_name|default:product.seller.user.username }}</small></div>
       <div class="price-row"><span>GHS {{ product.price }}</span><small>/ {{ product.unit }}</small></div>
       <form method="POST" action="{% url 'add_to_cart' product.id %}" class="inline-form">
         {% csrf_token %}
