@@ -1,6 +1,6 @@
 <section class="market-section">
   <div class="market-section-head">
-    <div><h2>{{ rail_title }}</h2>{% if rail_subtitle %}<p>{{ rail_subtitle }}</p>{% endif %}</div>
+    <div><h2>{{ rail_title }}</h2>{% if rail_subtitle %}<p>{{ rail_subtitle }}</p>{% endif %}</div>{% if rail_collection %}<a class="text-link" href="{% url 'product_collection' rail_collection %}">See all <i class="fa-solid fa-arrow-right"></i></a>{% endif %}
   </div>
   <div class="market-product-rail">
     {% for product in rail_products %}
