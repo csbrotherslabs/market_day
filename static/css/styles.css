@@ -333,3 +333,6 @@ input,select,textarea { background:rgba(255,255,255,.04); border:1px solid var(-
 /* Keep sidebar navigation typography consistent with the account/profile menu. */
 .sidebar .nav a{font-size:13px;font-weight:600}
 .sidebar .nav-label{font-size:13px;line-height:1.35}
+
+/* Product-card market navigation */
+.md-market-link{text-decoration:none;transition:color .16s ease}.md-market-link:hover{color:var(--btn-green);text-decoration:underline;text-underline-offset:2px}
