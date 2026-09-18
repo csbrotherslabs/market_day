@@ -53,7 +53,7 @@ def home(request):
         active=True,
         available_qty__gt=0,
         store__active=True,
-    ).select_related('seller', 'store', 'store__market', 'category').order_by('-created_at')
+    ).select_related('seller', 'seller__user', 'store', 'store__market', 'category').order_by('-created_at')
 
     local_products = products
     if selected_city:
@@ -67,7 +67,7 @@ def home(request):
         if product.category and product.category_id not in seen_categories:
             categories.append(product.category)
             seen_categories.add(product.category_id)
-        if len(categories) == 8:
+        if len(categories) == 10:
             break
 
     featured_stores = SellerStore.objects.filter(active=True).select_related(
@@ -76,13 +76,30 @@ def home(request):
     if selected_city and markets.exists():
         featured_stores = featured_stores.filter(market__in=markets)
 
+    featured_products = local_products.filter(featured=True)[:8]
+    discounted_products = local_products.filter(discount_price__isnull=False)[:8]
+    promoted_products = local_products.filter(promoted=True)[:8]
+    wholesale_products = local_products.filter(is_wholesale=True)[:8]
+    made_in_ghana_products = local_products.filter(made_in_ghana=True)[:8]
+    new_products = local_products[:8]
+
+    # Until enough order history exists for a ranking model, availability and recency
+    # provide a deterministic local fallback for this discovery rail.
+    popular_products = local_products.order_by('-available_qty', '-created_at')[:8]
+
     cart = request.session.get('cart', {})
     context = {
         'markets': markets[:8],
-        'products': local_products[:12],
-        'fresh_products': local_products[:8],
         'categories': categories,
+        'featured_products': featured_products,
+        'discounted_products': discounted_products,
+        'fresh_products': local_products[:8],
+        'popular_products': popular_products,
+        'promoted_products': promoted_products,
         'featured_stores': featured_stores[:6],
+        'wholesale_products': wholesale_products,
+        'made_in_ghana_products': made_in_ghana_products,
+        'new_products': new_products,
         'no_city_match': no_city_match,
         'selected_city': selected_city,
         'cart_count': sum(cart.values()) if cart else 0,
