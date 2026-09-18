@@ -44,7 +44,7 @@
           <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">◐</button>
           <div class="profile-dropdown">
             <button type="button" class="profile profile-link profile-trigger" id="profileMenuToggle" aria-haspopup="true" aria-expanded="false" aria-controls="profileMenu">
-              <div class="avatar">{% if user.is_authenticated %}{{ user.first_name|default:user.username|slice:':1'|upper }}{% else %}U{% endif %}</div>
+              <div class="avatar">{% if user.is_authenticated and user.profile.profile_image %}<img src="{{ user.profile.profile_image.url }}" alt="{{ user.get_full_name|default:user.username }}">{% elif user.is_authenticated %}{{ user.first_name|default:user.username|slice:':1'|upper }}{% else %}U{% endif %}</div>
               <div class="profile-copy">
                 <strong>{% if user.is_authenticated %}{{ user.first_name|default:user.username }}{% else %}Guest User{% endif %}</strong>
                 <span>{% if user.is_authenticated %}{{ user.profile.get_role_display }}{% else %}Sign in{% endif %}</span>
@@ -71,7 +71,7 @@
   <div class="profile-menu account-panel hidden" id="profileMenu" role="menu" aria-labelledby="profileMenuToggle">
     {% if user.is_authenticated %}
       <div class="account-panel-header">
-        <div class="avatar account-panel-avatar">{{ user.first_name|default:user.username|slice:':1'|upper }}</div>
+        <div class="avatar account-panel-avatar">{% if user.profile.profile_image %}<img src="{{ user.profile.profile_image.url }}" alt="{{ user.get_full_name|default:user.username }}">{% else %}{{ user.first_name|default:user.username|slice:':1'|upper }}{% endif %}</div>
         <div class="account-panel-identity"><strong>{{ user.get_full_name|default:user.username }}</strong><span>{{ user.profile.get_role_display }}</span></div>
         <button type="button" class="account-panel-close" id="profileMenuClose" aria-label="Close account menu"><i class="fa-solid fa-xmark"></i></button>
       </div>
