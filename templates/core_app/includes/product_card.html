@@ -5,7 +5,7 @@
   </div>
   <div class="md-product-content">
     <div class="md-seller-row">
-      <div class="md-seller-photo">{% if product.seller.seller_photo %}<img src="{{ product.seller.seller_photo.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}">{% else %}<span>{{ product.seller.user.first_name|default:product.seller.user.username|slice:':1'|upper }}</span>{% endif %}</div>
+      <div class="md-seller-photo">{% if product.seller.seller_photo %}<img src="{{ product.seller.seller_photo.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}">{% elif product.seller.user.profile.profile_image %}<img src="{{ product.seller.user.profile.profile_image.url }}" alt="{{ product.seller.user.get_full_name|default:product.seller.user.username }}">{% else %}<span>{{ product.seller.user.first_name|default:product.seller.user.username|slice:':1'|upper }}</span>{% endif %}</div>
       <div class="md-seller-copy">
         {% if product.store %}<a class="md-shop-link" href="{% url 'public_storefront' product.store.id %}">{{ product.store.name }} <i class="fa-solid fa-chevron-right"></i></a>{% else %}<strong>{{ product.seller.stall_name|default:product.seller.user.username }}</strong>{% endif %}
         {% if product.store.market %}<span class="md-market"><i class="fa-solid fa-location-dot"></i> {{ product.store.market.name }}</span>{% endif %}
@@ -16,7 +16,7 @@
     <h3 class="md-product-name">{{ product.name }}</h3>
     {% if product.description %}<p class="md-product-description">{{ product.description|truncatechars:76 }}</p>{% endif %}
     <div class="md-price-row">
-      <div class="md-price-group"><strong>GHS {% if product.discount_price and product.discount_price < product.price %}{{ product.discount_price }}{% else %}{{ product.price }}{% endif %}</strong>{% if product.discount_price and product.discount_price < product.price %}<del>GHS {{ product.price }}</del>{% endif %}</div>
+      <div class="md-price-group"><strong>GHS {% if product.discount_percentage %}{{ product.discount_price }}{% else %}{{ product.price }}{% endif %}</strong>{% if product.discount_percentage %}<del>GHS {{ product.price }}</del><span class="md-discount">{{ product.discount_percentage }}% OFF</span>{% endif %}</div>
       <span class="md-unit">/ {{ product.unit }}</span>
     </div>
     <div class="md-product-tags">
